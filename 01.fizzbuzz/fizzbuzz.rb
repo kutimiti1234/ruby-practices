@@ -14,8 +14,8 @@ def fizz_buzz(number)
 end
 
 x = ARGV[0].to_i
-i = 1
+Index = 1
 x.times do
   fizz_buzz(i)
-  i = i.succ
+  Index = Index.succ
 end
