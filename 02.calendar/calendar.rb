@@ -24,7 +24,8 @@ title = "#{month}月 #{year}"
 puts title.center(20)
 puts '日 月 火 水 木 金 土'
 # 0が日曜日,,6が土曜日のハッシュをweekと定義する。
-week = { 0 => '', 1 => '', 2 => '', 3 => '', 4 => '', 5 => '', 6 => '' }
+week = {}
+(0..6).each {|i| week[i]=nil}
 
 Range.new(first_day, lasta_day).each do |d|
   # 土曜日出ない限りweekに数字を入れる。
@@ -37,7 +38,7 @@ Range.new(first_day, lasta_day).each do |d|
   next unless d.saturday? || d == lasta_day
 
   week.each_value do |value|
-    if value == ''
+    if value.nil?
       #  空白が、埋められていたら2+1文字分空白を出力
       print '   '
     else
@@ -48,5 +49,5 @@ Range.new(first_day, lasta_day).each do |d|
   puts ''
   # binding.irb
   # weekを初期化
-  week = { 0 => '', 1 => '', 2 => '', 3 => '', 4 => '', 5 => '', 6 => '' }
+  (0..6).each { |i| week[i] = ' ' }
 end
