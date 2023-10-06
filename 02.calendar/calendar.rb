@@ -2,39 +2,51 @@
 
 require 'optparse'
 require 'date'
-opt = OptionParser.new
-opt.on('-y')
-opt.on('-m')
 
-year = opt.parse!(ARGV)[0].to_i
-month = opt.parse!(ARGV)[1].to_i
+params = ARGV.getopts('y:', 'm:')
+if params['y'].nil?
+  year = Date.today.year.to_i
+else
+  year = params['y'].to_i
+end
 
+if params['m'].nil?
+  month = Date.today.month.to_i
+else
+  month = params['m'].to_i
+end
 # binding.irb
 
-First_day = Date.new(year, month, 1)
-Last_day = Date.new(year, month, -1)
+first_day = Date.new(year, month, 1)
+lasta_day = Date.new(year, month, -1)
 
-title = "#{First_day.month}月 #{First_day.year}"
+title = "#{month}月 #{year}"
 puts title.center(20)
 puts '日 月 火 水 木 金 土'
 # 0が日曜日,,6が土曜日のハッシュをweekと定義する。
-week = { 0 => '', 1 => '', 2 => ' ', 3 => ' ', 4 => ' ', 5 => ' ', 6 => ' ' }
+week = { 0 => '', 1 => '', 2 => '', 3 => '', 4 => '', 5 => '', 6 => '' }
 
-Range.new(First_day, Last_day).each do |d|
+Range.new(first_day, lasta_day).each do |d|
   # 土曜日出ない限りweekに数字を入れる。
   week[d.wday] = if d != Date.today
                    d.day.to_s.rjust(2)
+                 # 当日は背景色と文字色を反転する
                  else
-                   # 当日は背景色と文字色を反転する
                    "\e[7m#{d.day.to_s.rjust(2)}\e[0m"
                  end
-  next unless d.saturday? || d == Last_day
+  next unless d.saturday? || d == lasta_day
 
   week.each_value do |value|
-    print "#{value} "
+    if value == ''
+      #  空白が、埋められていたら2+1文字分空白を出力
+      print '   '
+    else
+      print "#{value} "
+    end
   end
   # 週の改行
   puts ''
+  # binding.irb
   # weekを初期化
-  week = { 0 => '', 1 => '', 2 => ' ', 3 => ' ', 4 => ' ', 5 => ' ', 6 => ' ' }
+  week = { 0 => '', 1 => '', 2 => '', 3 => '', 4 => '', 5 => '', 6 => '' }
 end
