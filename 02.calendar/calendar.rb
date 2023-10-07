@@ -5,17 +5,17 @@ require 'optparse'
 require 'date'
 
 params = ARGV.getopts('y:', 'm:')
-if params['y'].nil?
-  year = Date.today.year.to_i
-else
-  year = params['y'].to_i
-end
+year = if params['y'].nil?
+         Date.today.year.to_i
+       else
+         params['y'].to_i
+       end
 
-if params['m'].nil?
-  month = Date.today.month.to_i
-else
-  month = params['m'].to_i
-end
+month = if params['m'].nil?
+          Date.today.month.to_i
+        else
+          params['m'].to_i
+        end
 # binding.irb
 
 first_day = Date.new(year, month, 1)
@@ -26,7 +26,7 @@ puts title.center(20)
 puts '日 月 火 水 木 金 土'
 # 0が日曜日,,6が土曜日のハッシュをweekと定義する。
 week = {}
-(0..6).each {|i| week[i]=nil}
+7.times { |i| week[i] = nil }
 
 Range.new(first_day, lasta_day).each do |d|
   # 土曜日出ない限りweekに数字を入れる。
@@ -50,5 +50,5 @@ Range.new(first_day, lasta_day).each do |d|
   puts ''
   # binding.irb
   # weekを初期化
-  (0..6).each { |i| week[i] = ' ' }
+  7.times { |i| week[i] = nil }
 end
