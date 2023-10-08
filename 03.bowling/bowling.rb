@@ -26,10 +26,11 @@ frames.each_with_index do |frame, index|
     point += frame.sum
 
     if frame[0] == 10 # strike
-      point += if frames[index.succ][0] != 10
-                 frames[index.succ][0] + frames[index.succ][1]
+  # 2連続ストライクが発生した場合、2フレーム先の一投目を参照する。
+      point += if frames[index.succ][0] == 10
+                10 + frames[index.succ.succ][0]
                else
-                 10 + frames[index.succ.succ][0]
+                frames[index.succ][0] + frames[index.succ][1]
                end
     elsif frame.sum == 10 # spare
       point += frames[index.succ][0]
