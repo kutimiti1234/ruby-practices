@@ -22,20 +22,19 @@ end
 point = 0
 frames.each_with_index do |frame, index|
   # 10投目だけ別の処理として行う。
-  if index <= 9
-    point += frame.sum
+  next unless index <= 9
 
-    if frame[0] == 10 # strike
-  # 2連続ストライクが発生した場合、2フレーム先の一投目を参照する。
-      point += if frames[index.succ][0] == 10
-                10 + frames[index.succ.succ][0]
-               else
-                frames[index.succ][0] + frames[index.succ][1]
-               end
-    elsif frame.sum == 10 # spare
-      point += frames[index.succ][0]
-    end
+  point += frame.sum
 
+  if frame[0] == 10 # strike
+    # 2連続ストライクが発生した場合、2フレーム先の一投目を参照する。
+    point += if frames[index.succ][0] == 10
+               10 + frames[index.succ.succ][0]
+             else
+               frames[index.succ][0] + frames[index.succ][1]
+             end
+  elsif frame.sum == 10 # spare
+    point += frames[index.succ][0]
   end
 end
 puts point
