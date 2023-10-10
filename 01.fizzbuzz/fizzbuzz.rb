@@ -13,8 +13,6 @@ def fizz_buzz(number)
   end
 end
 
-x = ARGV[0].to_i
-x.times do |i|
-  fizz_buzz(i)
-  i = i.succ
+20.times do |i|
+  fizz_buzz(i + 1)
 end
