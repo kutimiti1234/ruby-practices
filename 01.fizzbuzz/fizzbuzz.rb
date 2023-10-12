@@ -13,6 +13,6 @@ def fizz_buzz(number)
   end
 end
 
-20.times do |i|
-  fizz_buzz(i + 1)
+1.upto(20) do |i|
+  fizz_buzz(i)
 end
