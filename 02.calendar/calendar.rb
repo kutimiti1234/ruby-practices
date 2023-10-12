@@ -16,10 +16,9 @@ month = if params['m'].nil?
         else
           params['m'].to_i
         end
-# binding.irb
 
 first_day = Date.new(year, month, 1)
-lasta_day = Date.new(year, month, -1)
+last_day = Date.new(year, month, -1)
 
 title = "#{month}月 #{year}"
 puts title.center(20)
@@ -28,7 +27,7 @@ puts '日 月 火 水 木 金 土'
 week = {}
 7.times { |i| week[i] = nil }
 
-Range.new(first_day, lasta_day).each do |d|
+Range.new(first_day, last_day).each do |d|
   # 土曜日出ない限りweekに数字を入れる。
   week[d.wday] = if d != Date.today
                    d.day.to_s.rjust(2)
@@ -36,7 +35,7 @@ Range.new(first_day, lasta_day).each do |d|
                  else
                    "\e[7m#{d.day.to_s.rjust(2)}\e[0m"
                  end
-  next unless d.saturday? || d == lasta_day
+  next unless d.saturday? || d == last_day
 
   week.each_value do |value|
     if value.nil?
