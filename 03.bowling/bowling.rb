@@ -15,14 +15,11 @@ end
 
 frames = []
 # ありえない投球数、数字、記号が来ない前提
-shots.each_slice(2) do |s|
-  frames << s
-end
+frames = shots.each_slice(2).to_a
 
 point = 0
 frames.each_with_index do |frame, index|
-  # 10投目だけ別の処理として行う。
-  next unless index <= 9
+  next if index > 9
 
   point += frame.sum
 
