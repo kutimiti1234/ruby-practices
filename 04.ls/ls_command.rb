@@ -19,7 +19,7 @@ end
 def convert_to_displayable_array(display_file_names)
   # directory_displayで転地するために、転値可能な行列に編集する。
   display_file_names.last.fill('', display_file_names.last.size...display_file_names.first.size)
-  # 列ごとに最大文字数に合わせて幅を作る。
+  # 列ごとの幅を列の最大文字数に合わせて決定する。
   display_file_names.map! do |inner_array|
     max_words = inner_array.max_by(1, &:size).first.size
     inner_array.map! do |element|
