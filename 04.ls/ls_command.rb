@@ -3,10 +3,9 @@
 
 require 'optparse'
 
-def determine_files_order(file_names, display_max_line)
-  # 最大表示幅を考慮に入れながら列ごとの表示するファイルの位置を決定する。
+def organize_files(file_names, display_max_line)
   slice_number = if (file_names.to_a.size % display_max_line).zero?
-                   file_names.to_a.size / display_max_line
+                   [file_names.to_a.size / display_max_line, 1].max
                  else
                    file_names.to_a.size / display_max_line + 1
                  end
@@ -14,7 +13,7 @@ def determine_files_order(file_names, display_max_line)
 end
 
 def convert_to_displayable_array(display_file_names)
-  # directory_displayで転地するために、転値可能な行列に編集する。
+  # display_directoryで転地するために、転値可能な行列に編集する。
   display_file_names.last.fill('', display_file_names.last.size...display_file_names.first.size)
   # 列ごとの幅を列の最大文字数に合わせて決定する。
   display_file_names.map! do |inner_array|
@@ -25,7 +24,7 @@ def convert_to_displayable_array(display_file_names)
   end
 end
 
-def directory_display(display_file_names_displayable)
+def display_directory(display_file_names_displayable)
   # 要件の表示順に合わせて転置させたものを一つづつ表示する。
   display_file_names_displayable.transpose.each_with_index do |cols, _row|
     cols.each_with_index do |cell, _col|
@@ -37,10 +36,10 @@ end
 
 files = Dir.glob('*', base: ARGV[0]).sort
 
-display_max_line = 3
+DISPLAY_MAX_LINE = 3
 
-ordered_files = determine_files_order(files, display_max_line)
+ordered_files = organize_files(files, DISPLAY_MAX_LINE)
 
 convert_to_displayable_array(ordered_files)
 
-directory_display(ordered_files)
+display_directory(ordered_files)
