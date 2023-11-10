@@ -13,6 +13,8 @@ def organize_files(file_names, display_max_line)
 end
 
 def convert_to_displayable_array(display_file_names)
+  return display_file_names if display_file_names.last.nil?
+
   # display_directoryで転地するために、転値可能な行列に編集する。
   display_file_names.last.fill('', display_file_names.last.size...display_file_names.first.size)
   # 列ごとの幅を列の最大文字数に合わせて決定する。
