@@ -5,15 +5,12 @@ require 'optparse'
 
 def determine_files_order(file_names, display_max_line)
   # 最大表示幅を考慮に入れながら列ごとの表示するファイルの位置を決定する。
-  min_slice_number = if file_names.to_a.size / display_max_line < 1
-                       1
-                     else
-                       file_names.to_a.size / display_max_line
-                     end
-  (min_slice_number..file_names.to_a.size).each do |x|
-    display_file_names = file_names.each_slice(x).to_a
-    return display_file_names if file_names.each_slice(x).to_a.size <= display_max_line
-  end
+  slice_number = if (file_names.to_a.size % display_max_line).zero?
+                   file_names.to_a.size / display_max_line
+                 else
+                   file_names.to_a.size / display_max_line + 1
+                 end
+  file_names.each_slice(slice_number).to_a
 end
 
 def convert_to_displayable_array(display_file_names)
