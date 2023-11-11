@@ -14,6 +14,7 @@ def check_file_or_directory_existence(argv)
       exist_file_or_directory << x
     end
   end
+  exit if exist_file_or_directory.last.nil?
   exist_file_or_directory
 end
 
@@ -41,7 +42,6 @@ def convert_to_displayable_array(display_file_names)
 end
 
 def display_directory(display_file_names_displayable)
-  # 要件の表示順に合わせて転置させたものを一つづつ表示する。
   display_file_names_displayable.transpose.each_with_index do |cols, _row|
     cols.each_with_index do |cell, _col|
       print "#{cell}  "
@@ -52,7 +52,7 @@ end
 
 DISPLAY_MAX_LINE = 3
 
-argv = check_file_or_directory_existence(ARGV)
+argv = ARGV.last.nil? ? ARGV : check_file_or_directory_existence(ARGV)
 
 if ARGV.size <= 1
 
@@ -65,7 +65,7 @@ if ARGV.size <= 1
   display_directory(displayable_files)
 else
   argv.each do |path|
-    puts "#{path}:" if ARGV.size <= 1
+    puts "#{path}:"
 
     files = Dir.glob('*', base: path).sort
 
