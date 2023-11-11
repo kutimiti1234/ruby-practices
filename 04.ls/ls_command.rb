@@ -54,26 +54,26 @@ DISPLAY_MAX_LINE = 3
 
 argv = check_file_or_directory_existence(ARGV)
 
-if ARGV.size == 1 || ARGV.size == 0
+if ARGV.size <= 1
 
   files = Dir.glob('*', base: argv[0]).sort
 
   ordered_files = organize_files(files, DISPLAY_MAX_LINE)
 
-  ordered_files = convert_to_displayable_array(ordered_files)
+  displayable_files = convert_to_displayable_array(ordered_files)
 
-  display_directory(ordered_files)
+  display_directory(displayable_files)
 else
-  argv.each do |argv|
-    puts "#{argv}:"
+  argv.each do |path|
+    puts "#{path}:" if ARGV.size <= 1
 
-    files = Dir.glob('*', base: argv).sort
+    files = Dir.glob('*', base: path).sort
 
     ordered_files = organize_files(files, DISPLAY_MAX_LINE)
 
-    ordered_files = convert_to_displayable_array(ordered_files)
+    displayable_files = convert_to_displayable_array(ordered_files)
 
-    display_directory(ordered_files)
+    display_directory(displayable_files)
     puts
   end
 
