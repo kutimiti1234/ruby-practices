@@ -6,15 +6,15 @@ require 'optparse'
 def check_file_or_directory_existence(argv)
   return argv if argv.nil?
 
-  exist_file_ordirectory = []
+  exist_file_or_directory = []
   argv.each do |x|
     if !File.exist?(x)
       puts "ls: #{x} にアクセスできません: そのようなファイルやディレクトリはありません。"
     else
-      exist_file_ordirectory << x
+      exist_file_or_directory << x
     end
   end
-  exist_file_ordirectory
+  exist_file_or_directory
 end
 
 def organize_files(file_names, display_max_line)
@@ -54,7 +54,7 @@ DISPLAY_MAX_LINE = 3
 
 argv = check_file_or_directory_existence(ARGV)
 
-if ARGV.size == 1
+if ARGV.size == 1 || ARGV.size == 0
 
   files = Dir.glob('*', base: argv[0]).sort
 
