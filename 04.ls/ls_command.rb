@@ -3,6 +3,20 @@
 
 require 'optparse'
 
+def check_file_or_directory_existence(argv)
+  return argv if argv.nil?
+
+  exist_file_ordirectory = []
+  argv.each do |x|
+    if !File.exist?(x)
+      puts "ls: #{x} にアクセスできません: そのようなファイルやディレクトリはありません。"
+    else
+      exist_file_ordirectory << x
+    end
+  end
+  exist_file_ordirectory
+end
+
 def organize_files(file_names, display_max_line)
   slice_number = if (file_names.to_a.size % display_max_line).zero?
                    [file_names.to_a.size / display_max_line, 1].max
@@ -18,9 +32,9 @@ def convert_to_displayable_array(display_file_names)
   # display_directoryで転地するために、転値可能な行列に編集する。
   display_file_names.last.fill('', display_file_names.last.size...display_file_names.first.size)
   # 列ごとの幅を列の最大文字数に合わせて決定する。
-  display_file_names.map! do |inner_array|
+  display_file_names.map do |inner_array|
     max_words = inner_array.max_by(1, &:size).first.size
-    inner_array.map! do |element|
+    inner_array.map do |element|
       element.ljust(max_words)
     end
   end
@@ -36,12 +50,31 @@ def display_directory(display_file_names_displayable)
   end
 end
 
-files = Dir.glob('*', base: ARGV[0]).sort
-
 DISPLAY_MAX_LINE = 3
 
-ordered_files = organize_files(files, DISPLAY_MAX_LINE)
+argv = check_file_or_directory_existence(ARGV)
 
-convert_to_displayable_array(ordered_files)
+if ARGV.size == 1
 
-display_directory(ordered_files)
+  files = Dir.glob('*', base: argv[0]).sort
+
+  ordered_files = organize_files(files, DISPLAY_MAX_LINE)
+
+  ordered_files = convert_to_displayable_array(ordered_files)
+
+  display_directory(ordered_files)
+else
+  argv.each do |argv|
+    puts "#{argv}:"
+
+    files = Dir.glob('*', base: argv).sort
+
+    ordered_files = organize_files(files, DISPLAY_MAX_LINE)
+
+    ordered_files = convert_to_displayable_array(ordered_files)
+
+    display_directory(ordered_files)
+    puts
+  end
+
+end
