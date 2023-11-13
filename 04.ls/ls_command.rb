@@ -52,29 +52,17 @@ end
 
 DISPLAY_MAX_LINE = 3
 
-argv = ARGV.last.nil? ? ARGV : check_file_or_directory_existence(ARGV)
+argv = ARGV.empty? ? [nil] : check_file_or_directory_existence(ARGV)
 
-if ARGV.size <= 1
+argv.each do |path|
+  puts "#{path}:" unless path.nil? || ARGV.size == 1
 
-  files = Dir.glob('*', base: argv[0]).sort
+  files = Dir.glob('*', base: path).sort
 
   ordered_files = organize_files(files, DISPLAY_MAX_LINE)
 
   displayable_files = convert_to_displayable_array(ordered_files)
 
   display_directory(displayable_files)
-else
-  argv.each do |path|
-    puts "#{path}:"
-
-    files = Dir.glob('*', base: path).sort
-
-    ordered_files = organize_files(files, DISPLAY_MAX_LINE)
-
-    displayable_files = convert_to_displayable_array(ordered_files)
-
-    display_directory(displayable_files)
-    puts
-  end
-
+  puts
 end
