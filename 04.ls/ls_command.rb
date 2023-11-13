@@ -3,7 +3,7 @@
 
 require 'optparse'
 
-def check_file_or_directory_existence(argv)
+def validate_file_or_directory_existence(argv)
   return argv if argv.nil?
 
   exist_file_or_directory = []
@@ -52,7 +52,7 @@ end
 
 DISPLAY_MAX_LINE = 3
 
-argv = ARGV.empty? ? [nil] : check_file_or_directory_existence(ARGV)
+argv = ARGV.empty? ? [nil] : validate_file_or_directory_existence(ARGV)
 
 argv.each do |path|
   puts "#{path}:" unless path.nil? || ARGV.size == 1
