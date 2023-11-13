@@ -19,11 +19,7 @@ def validate_file_or_directory_existence(argv)
 end
 
 def organize_files(file_names, display_max_line)
-  slice_number = if (file_names.to_a.size % display_max_line).zero?
-                   [file_names.to_a.size / display_max_line, 1].max
-                 else
-                   file_names.to_a.size / display_max_line + 1
-                 end
+  slice_number = [file_names.to_a.size.ceildiv(display_max_line), 1].max
   file_names.each_slice(slice_number).to_a
 end
 
