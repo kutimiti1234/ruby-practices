@@ -14,7 +14,7 @@ def validate_file_or_directory_existence(argv)
       exist_file_or_directory << x
     end
   end
-  exit if exist_file_or_directory.last.nil?
+  abort if exist_file_or_directory.last.nil?
   exist_file_or_directory
 end
 
