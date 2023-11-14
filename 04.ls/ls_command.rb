@@ -51,7 +51,7 @@ DISPLAY_MAX_LINE = 3
 argv = ARGV.empty? ? [nil] : validate_file_or_directory_existence(ARGV)
 
 argv.each do |path|
-  puts "#{path}:" unless path.nil? || ARGV.size == 1
+  puts "#{path}:" if argv.size > 1 || ARGV.size != 1
 
   files = Dir.glob('*', base: path).sort
 
