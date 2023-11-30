@@ -2,6 +2,15 @@
 # frozen_string_literal: true
 
 require 'optparse'
+def parse_option(argv)
+  argv_option = {}
+  argv_files = []
+  OptionParser.new do |opt|
+    opt.on('-a') { |v| argv_option[:a] = v }
+    argv_files = opt.parse!(argv)
+  end
+  [argv_option, argv_files]
+end
 
 def validate_file_or_directory_existence(argv)
   return argv if argv.nil?
@@ -48,13 +57,18 @@ end
 
 DISPLAY_MAX_LINE = 3
 
-argv = ARGV.empty? ? [nil] : validate_file_or_directory_existence(ARGV)
+options, argv = parse_option(ARGV)
+
+argv = argv.empty? ? [nil] : validate_file_or_directory_existence(argv)
 
 argv.each do |path|
   puts "#{path}:" if argv.size > 1 || ARGV.size > 1
-
-  files = Dir.glob('*', base: path).sort
-
+  files = if options[:a]
+            path = '.' if path.nil?
+            Dir.foreach(path).sort
+          else
+            Dir.glob('*', base: path).sort
+          end
   ordered_files = organize_files(files, DISPLAY_MAX_LINE)
 
   displayable_files = convert_to_displayable_array(ordered_files)
