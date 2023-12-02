@@ -2,14 +2,14 @@
 # frozen_string_literal: true
 
 require 'optparse'
-def parse_option(argv)
-  argv_option = {}
+def parse_argv_and_options(argv)
+  argv_options = {}
   argv_files = []
   OptionParser.new do |opt|
-    opt.on('-a') { |v| argv_option[:a] = v }
+    opt.on('-a') { |v| argv_options[:a] = v }
     argv_files = opt.parse(argv)
   end
-  [argv_option, argv_files]
+  [argv_options, argv_files]
 end
 
 def validate_file_or_directory_existence(argv)
@@ -57,7 +57,7 @@ end
 
 DISPLAY_MAX_LINE = 3
 
-options, argv = parse_option(ARGV)
+options, argv = parse_argv_and_options(ARGV)
 
 argv = argv.empty? ? [nil] : validate_file_or_directory_existence(argv)
 
