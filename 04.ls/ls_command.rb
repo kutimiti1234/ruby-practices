@@ -4,37 +4,28 @@
 require 'optparse'
 def parse_argv_and_options(argv)
   argv_options = {}
+  argv_directories = []
   argv_files = []
+  argv_errors = []
+
   OptionParser.new do |opt|
     opt.on('-a') { |v| argv_options[:a] = v }
-    argv_files = opt.parse(argv)
+    # argvからオプションを取り除く
+    argv = opt.parse(argv)
   end
-  [argv_options, argv_files]
-end
-
-def validate_file_or_directory_existence(argv)
-  return argv if argv.nil?
-
-  exist_directory = []
-  exist_file = []
+  # argvにコマンド引数が指定されなかった場合カレントディレクトリを指定するようにする
+  argv_directories << '.' if argv.empty?
   argv.each do |x|
     if File.directory?(x)
-      exist_directory << x
+      argv_directories << x
     elsif File.file?(x)
-      exist_file << x
+      argv_files << x
     else
-      puts "ls: '#{x}' にアクセスできません: そのようなファイルやディレクトリはありません。"
+      argv_errors << x
     end
   end
-  # 引数にファイルを指定した場合、ディレクトリと区別して表示するためのロジック
-  if !exist_file.nil?
-    files = organize_files(exist_file, DISPLAY_MAX_LINE)
-    files = convert_to_displayable_array(files)
-    display_directory(files)
-    puts ''
-  end
-  abort if exist_directory.last.nil?
-  exist_directory
+
+  [argv_options, argv_directories, argv_files, argv_errors]
 end
 
 def organize_files(file_names, display_max_line)
@@ -66,13 +57,27 @@ def display_directory(display_file_names_displayable)
 end
 
 DISPLAY_MAX_LINE = 3
-# オプションとコマンド引数を分離するロジック
-options, argv = parse_argv_and_options(ARGV)
 
-argv = argv.empty? ? [nil] : validate_file_or_directory_existence(argv)
+options, argv_directories, argv_files, argv_errors = parse_argv_and_options(ARGV)
 
-argv.each do |path|
-  puts "#{path}:" if argv.size > 1 || ARGV.size > 1
+if !argv_errors.empty?
+  argv_errors.each do |error_argument|
+    puts "ls: '#{error_argument}' にアクセスできません: そのようなファイルやディレクトリはありません。"
+  end
+end
+
+# 引数にファイルを指定した場合、ディレクトリと区別して表示する
+if !argv_files.empty?
+  files = organize_files(argv_files, DISPLAY_MAX_LINE)
+  files = convert_to_displayable_array(files)
+  display_directory(files)
+  puts ''
+end
+
+argv_directories.each do |path|
+  puts "#{path}:" if (argv_directories.size + argv_files.size) > 1
+  puts "#{path}:" if (argv_directories.size + argv_files.size) == 1 && !argv_errors.empty?
+
   files = if options[:a]
             path = '.' if path.nil?
             Dir.foreach(path).sort
