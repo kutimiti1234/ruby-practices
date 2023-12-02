@@ -7,7 +7,7 @@ def parse_option(argv)
   argv_files = []
   OptionParser.new do |opt|
     opt.on('-a') { |v| argv_option[:a] = v }
-    argv_files = opt.parse!(argv)
+    argv_files = opt.parse(argv)
   end
   [argv_option, argv_files]
 end
