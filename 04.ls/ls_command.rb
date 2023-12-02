@@ -66,7 +66,7 @@ def display_directory(display_file_names_displayable)
 end
 
 DISPLAY_MAX_LINE = 3
-
+# オプションとコマンド引数を分離するロジック
 options, argv = parse_argv_and_options(ARGV)
 
 argv = argv.empty? ? [nil] : validate_file_or_directory_existence(argv)
