@@ -25,7 +25,7 @@ def parse_argv_and_options(argv)
     end
   end
 
-  [argv_options, argv_directories, argv_files, argv_errors]
+  [argv_options, argv_directories.sort, argv_files.sort, argv_errors]
 end
 
 def organize_files(file_names, display_max_line)
@@ -68,7 +68,6 @@ end
 
 # 引数にファイルを指定した場合、ディレクトリと区別して表示する
 if !argv_files.empty?
-  argv_files = argv_files.sort
   files = organize_files(argv_files, DISPLAY_MAX_LINE)
   files = convert_to_displayable_array(files)
   display_directory(files)
