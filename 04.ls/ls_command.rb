@@ -15,16 +15,26 @@ end
 def validate_file_or_directory_existence(argv)
   return argv if argv.nil?
 
-  exist_file_or_directory = []
+  exist_directory = []
+  exist_file = []
   argv.each do |x|
-    if !File.exist?(x)
-      puts "ls: '#{x}' にアクセスできません: そのようなファイルやディレクトリはありません。"
+    if File.directory?(x)
+      exist_directory << x
+    elsif File.file?(x)
+      exist_file << x
     else
-      exist_file_or_directory << x
+      puts "ls: '#{x}' にアクセスできません: そのようなファイルやディレクトリはありません。"
     end
   end
-  abort if exist_file_or_directory.last.nil?
-  exist_file_or_directory
+  # 引数にファイルを指定した場合、ディレクトリと区別して表示するためのロジック
+  if !exist_file.nil?
+    files = organize_files(exist_file, DISPLAY_MAX_LINE)
+    files = convert_to_displayable_array(files)
+    display_directory(files)
+    puts ''
+  end
+  abort if exist_directory.last.nil?
+  exist_directory
 end
 
 def organize_files(file_names, display_max_line)
