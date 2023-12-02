@@ -68,6 +68,7 @@ end
 
 # 引数にファイルを指定した場合、ディレクトリと区別して表示する
 if !argv_files.empty?
+  argv_files = argv_files.sort
   files = organize_files(argv_files, DISPLAY_MAX_LINE)
   files = convert_to_displayable_array(files)
   display_directory(files)
