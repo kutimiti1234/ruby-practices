@@ -25,7 +25,7 @@ def parse_argv_and_options(argv)
     end
   end
 
-  [argv_options, argv_directories.sort, argv_files.sort, argv_errors]
+  CommandlineArguments.new(options: argv_options, directories: argv_directories.sort, files: argv_files.sort, errors: argv_errors)
 end
 
 def organize_files(file_names, display_max_line)
@@ -57,28 +57,28 @@ def display_directory(display_file_names_displayable)
 end
 
 DISPLAY_MAX_LINE = 3
+CommandlineArguments = Data.define(:options, :directories, :files, :errors)
+commandline_arguments = parse_argv_and_options(ARGV)
 
-options, argv_directories, argv_files, argv_errors = parse_argv_and_options(ARGV)
-
-if !argv_errors.empty?
-  argv_errors.each do |error_argument|
+if !commandline_arguments.errors.empty?
+  commandline_arguments.errors.each do |error_argument|
     puts "ls: '#{error_argument}' にアクセスできません: そのようなファイルやディレクトリはありません。"
   end
 end
 
 # 引数にファイルを指定した場合、ディレクトリと区別して表示する
-if !argv_files.empty?
-  files = organize_files(argv_files, DISPLAY_MAX_LINE)
+if !commandline_arguments.files.empty?
+  files = organize_files(commandline_arguments.files, DISPLAY_MAX_LINE)
   files = convert_to_displayable_array(files)
   display_directory(files)
   puts ''
 end
 
-argv_directories.each do |path|
-  puts "#{path}:" if (argv_directories.size + argv_files.size) > 1
-  puts "#{path}:" if (argv_directories.size + argv_files.size) == 1 && !argv_errors.empty?
+commandline_arguments.directories.each do |path|
+  puts "#{path}:" if (commandline_arguments.directories.size + commandline_arguments.files.size) > 1
+  puts "#{path}:" if (commandline_arguments.directories.size + commandline_arguments.files.size) == 1 && !commandline_arguments.errors.empty?
 
-  files = if options[:a]
+  files = if commandline_arguments.options[:a]
             path = '.' if path.nil?
             Dir.foreach(path).sort
           else
