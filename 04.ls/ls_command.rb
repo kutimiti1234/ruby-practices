@@ -82,7 +82,7 @@ argv_directories.each do |path|
             path = '.' if path.nil?
             Dir.foreach(path).sort
           else
-            Dir.glob('*', base: path).sort
+            Dir.glob('*', base: path)
           end
   ordered_files = organize_files(files, DISPLAY_MAX_LINE)
 
