@@ -25,7 +25,7 @@ def parse_argv_and_options(argv)
     end
   end
 
-  CommandlineArguments.new(options: argv_options, directories: argv_directories.sort, files: argv_files.sort, errors: argv_errors)
+  ParseResult.new(options: argv_options, directories: argv_directories.sort, files: argv_files.sort, errors: argv_errors)
 end
 
 def organize_files(file_names, display_max_line)
@@ -57,7 +57,7 @@ def display_directory(display_file_names_displayable)
 end
 
 DISPLAY_MAX_LINE = 3
-CommandlineArguments = Data.define(:options, :directories, :files, :errors)
+ParseResult = Data.define(:options, :directories, :files, :errors)
 commandline_arguments = parse_argv_and_options(ARGV)
 
 if !commandline_arguments.errors.empty?
