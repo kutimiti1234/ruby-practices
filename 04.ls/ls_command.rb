@@ -2,20 +2,30 @@
 # frozen_string_literal: true
 
 require 'optparse'
+def parse_argv_and_options(argv)
+  argv_options = {}
+  argv_directories = []
+  argv_files = []
+  argv_errors = []
 
-def validate_file_or_directory_existence(argv)
-  return argv if argv.nil?
-
-  exist_file_or_directory = []
+  OptionParser.new do |opt|
+    opt.on('-a') { |v| argv_options[:a] = v }
+    # argvからオプションを取り除く
+    argv = opt.parse(argv)
+  end
+  # argvにコマンド引数が指定されなかった場合カレントディレクトリを指定するようにする
+  argv_directories << '.' if argv.empty?
   argv.each do |x|
-    if !File.exist?(x)
-      puts "ls: #{x} にアクセスできません: そのようなファイルやディレクトリはありません。"
+    if File.directory?(x)
+      argv_directories << x
+    elsif File.file?(x)
+      argv_files << x
     else
-      exist_file_or_directory << x
+      argv_errors << x
     end
   end
-  abort if exist_file_or_directory.last.nil?
-  exist_file_or_directory
+
+  ParseResult.new(options: argv_options, directories: argv_directories.sort, files: argv_files.sort, errors: argv_errors)
 end
 
 def organize_files(file_names, display_max_line)
@@ -47,14 +57,33 @@ def display_directory(display_file_names_displayable)
 end
 
 DISPLAY_MAX_LINE = 3
+ParseResult = Data.define(:options, :directories, :files, :errors)
+commandline_arguments = parse_argv_and_options(ARGV)
 
-argv = ARGV.empty? ? [nil] : validate_file_or_directory_existence(ARGV)
+if !commandline_arguments.errors.empty?
+  commandline_arguments.errors.each do |error_argument|
+    puts "ls: '#{error_argument}' にアクセスできません: そのようなファイルやディレクトリはありません。"
+  end
+end
 
-argv.each do |path|
-  puts "#{path}:" if argv.size > 1 || ARGV.size != 1
+# 引数にファイルを指定した場合、ディレクトリと区別して表示する
+if !commandline_arguments.files.empty?
+  files = organize_files(commandline_arguments.files, DISPLAY_MAX_LINE)
+  files = convert_to_displayable_array(files)
+  display_directory(files)
+  puts ''
+end
 
-  files = Dir.glob('*', base: path).sort
+commandline_arguments.directories.each do |path|
+  puts "#{path}:" if (commandline_arguments.directories.size + commandline_arguments.files.size) > 1
+  puts "#{path}:" if (commandline_arguments.directories.size + commandline_arguments.files.size) == 1 && !commandline_arguments.errors.empty?
 
+  files = if commandline_arguments.options[:a]
+            path = '.' if path.nil?
+            Dir.foreach(path).sort
+          else
+            Dir.glob('*', base: path)
+          end
   ordered_files = organize_files(files, DISPLAY_MAX_LINE)
 
   displayable_files = convert_to_displayable_array(ordered_files)
