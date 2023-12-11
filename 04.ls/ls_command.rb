@@ -76,7 +76,7 @@ end
 
 # 引数にファイルを指定した場合、ディレクトリと区別して表示する
 if !commandline_arguments.files.empty?
-  files = files.sort.reverse if commandline_arguments.options[:r]
+  files = commandline_arguments.files.sort.reverse if commandline_arguments.options[:r]
   files = organize_files(commandline_arguments.files, DISPLAY_MAX_LINE)
   files = convert_to_displayable_array(files)
   display_directory(files)
