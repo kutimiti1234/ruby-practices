@@ -10,6 +10,7 @@ def parse_argv_and_options(argv)
 
   OptionParser.new do |opt|
     opt.on('-a') { |v| argv_options[:a] = v }
+    opt.on('-r') { |v| argv_options[:r] = v }
     # argvからオプションを取り除く
     argv = opt.parse(argv)
   end
@@ -68,6 +69,7 @@ end
 
 # 引数にファイルを指定した場合、ディレクトリと区別して表示する
 if !commandline_arguments.files.empty?
+  files = files.sort.reverse if commandline_arguments.options[:r]
   files = organize_files(commandline_arguments.files, DISPLAY_MAX_LINE)
   files = convert_to_displayable_array(files)
   display_directory(files)
@@ -84,6 +86,7 @@ commandline_arguments.directories.each do |path|
           else
             Dir.glob('*', base: path)
           end
+  files = files.sort.reverse if commandline_arguments.options[:r]
   ordered_files = organize_files(files, DISPLAY_MAX_LINE)
 
   displayable_files = convert_to_displayable_array(ordered_files)
