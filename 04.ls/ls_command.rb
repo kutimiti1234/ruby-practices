@@ -2,18 +2,23 @@
 # frozen_string_literal: true
 
 require 'optparse'
-def parse_argv_and_options(argv)
+def parse_and_remove_options(argv)
   argv_options = {}
+  OptionParser.new do |opt|
+    opt.on('-a') { |v| argv_options[:a] = v }
+    opt.on('-r') { |v| argv_options[:r] = v }
+    opt.on('-l') { |v| argv_options[:l] = v }
+    # argvからオプションを取り除く
+    opt.parse!(argv)
+  end
+  argv_options
+end
+
+def parse_argv(argv)
   argv_directories = []
   argv_files = []
   argv_errors = []
 
-  OptionParser.new do |opt|
-    opt.on('-a') { |v| argv_options[:a] = v }
-    opt.on('-r') { |v| argv_options[:r] = v }
-    # argvからオプションを取り除く
-    argv = opt.parse(argv)
-  end
   # argvにコマンド引数が指定されなかった場合カレントディレクトリを指定するようにする
   argv_directories << '.' if argv.empty?
   argv.each do |x|
@@ -26,7 +31,7 @@ def parse_argv_and_options(argv)
     end
   end
 
-  ParseResult.new(options: argv_options, directories: argv_directories.sort, files: argv_files.sort, errors: argv_errors)
+  { directories: argv_directories, files: argv_files, errors: argv_errors }
 end
 
 def organize_files(file_names, display_max_line)
@@ -59,7 +64,9 @@ end
 
 DISPLAY_MAX_LINE = 3
 ParseResult = Data.define(:options, :directories, :files, :errors)
-commandline_arguments = parse_argv_and_options(ARGV)
+argv_options = parse_and_remove_options(ARGV)
+argv_arguments = parse_argv(ARGV)
+commandline_arguments = ParseResult.new(options: argv_options, **argv_arguments)
 
 if !commandline_arguments.errors.empty?
   commandline_arguments.errors.each do |error_argument|
