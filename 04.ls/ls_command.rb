@@ -34,6 +34,39 @@ def parse_argv(argv)
   { directories: argv_directories, files: argv_files, errors: argv_errors }
 end
 
+def file_info(file)
+  file_info = File.lstat(file)
+  case file_info.ftype
+  when 'direcotry'
+    file_type = 'd'
+  when  'file'
+    file_type = '-'
+  when  'link'
+    file_type = 'l'
+  end
+
+  file_permissions = file_info.mode.to_s(8).rjust(6, '0')[3..5].chars.map do |c|
+    rdx = if (c.to_i & 0b100).positive?
+            'r'
+          else
+            '-'
+          end +
+          if (c.to_i & 0b010).positive?
+            'w'
+          else
+            '-'
+          end +
+          if (c.to_i & 0b001).positive?
+            'x'
+          else
+            '-'
+          end
+    rdx
+  end.join
+
+  file_type + file_permissions
+end
+
 def organize_files(file_names, display_max_line)
   slice_number = [file_names.to_a.size.ceildiv(display_max_line), 1].max
   file_names.each_slice(slice_number).to_a
@@ -76,28 +109,38 @@ end
 
 # 引数にファイルを指定した場合、ディレクトリと区別して表示する
 if !commandline_arguments.files.empty?
-  files = commandline_arguments.files.sort.reverse if commandline_arguments.options[:r]
-  files = organize_files(commandline_arguments.files, DISPLAY_MAX_LINE)
-  files = convert_to_displayable_array(files)
-  display_directory(files)
-  puts ''
+  if commandline_arguments.options[:l]
+    p 'ひとまず'
+  else
+    files = commandline_arguments.files.sort.reverse if commandline_arguments.options[:r]
+    files = organize_files(commandline_arguments.files, DISPLAY_MAX_LINE)
+    files = convert_to_displayable_array(files)
+    display_directory(files)
+    puts ''
+
+  end
 end
 
 commandline_arguments.directories.each do |path|
-  puts "#{path}:" if (commandline_arguments.directories.size + commandline_arguments.files.size) > 1
-  puts "#{path}:" if (commandline_arguments.directories.size + commandline_arguments.files.size) == 1 && !commandline_arguments.errors.empty?
+  if commandline_arguments.options[:l]
+    p 'ひとまず'
+  else
 
-  files = if commandline_arguments.options[:a]
-            path = '.' if path.nil?
-            Dir.foreach(path).sort
-          else
-            Dir.glob('*', base: path)
-          end
-  files = files.sort.reverse if commandline_arguments.options[:r]
-  ordered_files = organize_files(files, DISPLAY_MAX_LINE)
+    puts "#{path}:" if (commandline_arguments.directories.size + commandline_arguments.files.size) > 1
+    puts "#{path}:" if (commandline_arguments.directories.size + commandline_arguments.files.size) == 1 && !commandline_arguments.errors.empty?
 
-  displayable_files = convert_to_displayable_array(ordered_files)
+    files = if commandline_arguments.options[:a]
+              path = '.' if path.nil?
+              Dir.foreach(path).sort
+            else
+              Dir.glob('*', base: path)
+            end
+    files = files.sort.reverse if commandline_arguments.options[:r]
+    ordered_files = organize_files(files, DISPLAY_MAX_LINE)
 
-  display_directory(displayable_files)
-  puts
+    displayable_files = convert_to_displayable_array(ordered_files)
+
+    display_directory(displayable_files)
+    puts
+  end
 end
