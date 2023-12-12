@@ -118,26 +118,38 @@ if !commandline_arguments.files.empty?
   puts ''
 end
 
-commandline_arguments.directories.each do |path|
+directories = if commandline_arguments.options[:r]
+                commandline_arguments.directories.sort.reverse
+              else
+                commandline_arguments.directories
+              end
+directories.each do |path|
+  puts "#{path}:" if (commandline_arguments.directories.size + commandline_arguments.files.size) > 1
+  puts "#{path}:" if (commandline_arguments.directories.size + commandline_arguments.files.size) == 1 && !commandline_arguments.errors.empty?
+
+  files = if commandline_arguments.options[:a]
+            path = '.' if path.nil?
+            Dir.foreach(path).sort
+          else
+            Dir.glob('*', base: path)
+          end
+  files = files.sort.reverse if commandline_arguments.options[:r]
   if commandline_arguments.options[:l]
-    p 'ひとまず'
+    files.each do |file|
+      file_stat = File.lstat(File.expand_path(file, path))
+      mode = file_mode_drx(file_stat)
+      nlink = file_stat.nlink
+      uid = Etc.getpwuid(file_stat.uid).name
+      gid = Etc.getpwuid(file_stat.gid).name
+      ctime = file_stat.ctime.strftime('%m月 %d %H:%M')
+      puts "#{mode} #{nlink} #{uid} #{gid} #{file_stat.size} #{ctime} #{file}"
+    end
   else
-
-    puts "#{path}:" if (commandline_arguments.directories.size + commandline_arguments.files.size) > 1
-    puts "#{path}:" if (commandline_arguments.directories.size + commandline_arguments.files.size) == 1 && !commandline_arguments.errors.empty?
-
-    files = if commandline_arguments.options[:a]
-              path = '.' if path.nil?
-              Dir.foreach(path).sort
-            else
-              Dir.glob('*', base: path)
-            end
-    files = files.sort.reverse if commandline_arguments.options[:r]
     ordered_files = organize_files(files, DISPLAY_MAX_LINE)
 
     displayable_files = convert_to_displayable_array(ordered_files)
 
     display_directory(displayable_files)
-    puts
   end
+  puts ''
 end
