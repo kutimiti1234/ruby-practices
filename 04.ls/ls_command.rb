@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require 'optparse'
+require 'etc'
 def parse_and_remove_options(argv)
   argv_options = {}
   OptionParser.new do |opt|
@@ -34,34 +35,17 @@ def parse_argv(argv)
   { directories: argv_directories, files: argv_files, errors: argv_errors }
 end
 
-def file_info(file)
-  file_info = File.lstat(file)
-  case file_info.ftype
-  when 'direcotry'
-    file_type = 'd'
-  when  'file'
-    file_type = '-'
-  when  'link'
-    file_type = 'l'
-  end
+def file_mode_drx(file_stat)
+  file_type_lookup = {
+    'directory' => 'd',
+    'file' => '-',
+    'link' => 'l'
+  }
 
-  file_permissions = file_info.mode.to_s(8).rjust(6, '0')[3..5].chars.map do |c|
-    rdx = if (c.to_i & 0b100).positive?
-            'r'
-          else
-            '-'
-          end +
-          if (c.to_i & 0b010).positive?
-            'w'
-          else
-            '-'
-          end +
-          if (c.to_i & 0b001).positive?
-            'x'
-          else
-            '-'
-          end
-    rdx
+  file_type = file_type_lookup[file_stat.ftype]
+  file_permissions = file_stat.mode.to_s(8).rjust(6, '0')[3..5].chars.map do |c|
+    rwx = %w[- x w . r]
+    rwx[c.to_i & 0b100] + rwx[c.to_i & 0b010] + rwx[c.to_i & 0b001]
   end.join
 
   file_type + file_permissions
@@ -110,7 +94,15 @@ end
 # 引数にファイルを指定した場合、ディレクトリと区別して表示する
 if !commandline_arguments.files.empty?
   if commandline_arguments.options[:l]
-    p 'ひとまず'
+    commandline_arguments.files.each do |file|
+      file_stat = File.lstat(file)
+      mode = file_mode_drx(file_stat)
+      nlink = file_stat.nlink
+      uid = Etc.getpwuid(file_stat.uid).name
+      gid = Etc.getpwuid(file_stat.gid).name
+      ctime = file_stat.ctime.strftime('%m月 %d %H:%M')
+      puts "#{mode} #{nlink} #{uid} #{gid} #{file_stat.size} #{ctime} #{file}"
+    end
   else
     files = commandline_arguments.files.sort.reverse if commandline_arguments.options[:r]
     files = organize_files(commandline_arguments.files, DISPLAY_MAX_LINE)
