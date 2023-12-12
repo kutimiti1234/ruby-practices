@@ -93,8 +93,14 @@ end
 
 # 引数にファイルを指定した場合、ディレクトリと区別して表示する
 if !commandline_arguments.files.empty?
+  files = if commandline_arguments.options[:r]
+            commandline_arguments.files.sort.reverse
+          else
+            commandline_arguments.files
+          end
+
   if commandline_arguments.options[:l]
-    commandline_arguments.files.each do |file|
+    files.each do |file|
       file_stat = File.lstat(file)
       mode = file_mode_drx(file_stat)
       nlink = file_stat.nlink
@@ -104,8 +110,7 @@ if !commandline_arguments.files.empty?
       puts "#{mode} #{nlink} #{uid} #{gid} #{file_stat.size} #{ctime} #{file}"
     end
   else
-    files = commandline_arguments.files.sort.reverse if commandline_arguments.options[:r]
-    files = organize_files(commandline_arguments.files, DISPLAY_MAX_LINE)
+    files = organize_files(files, DISPLAY_MAX_LINE)
     files = convert_to_displayable_array(files)
     display_directory(files)
 
