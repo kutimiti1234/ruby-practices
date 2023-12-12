@@ -108,9 +108,9 @@ if !commandline_arguments.files.empty?
     files = organize_files(commandline_arguments.files, DISPLAY_MAX_LINE)
     files = convert_to_displayable_array(files)
     display_directory(files)
-    puts ''
 
   end
+  puts ''
 end
 
 commandline_arguments.directories.each do |path|
