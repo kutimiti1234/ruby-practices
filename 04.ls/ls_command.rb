@@ -59,7 +59,7 @@ end
 
 def format_file_info(file_info)
   file_info.each_key do |key|
-    max_width = file_info[key].max_by(1, &:size).first.to_s.size
+    max_width = file_info[key].map(&:to_s).max_by(1, &:size).first.size
     file_info[key] = file_info[key].map do |row|
       if key == :name
         row.to_s.ljust(max_width)
