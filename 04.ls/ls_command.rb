@@ -70,6 +70,19 @@ def format_file_info(file_info)
   end
 end
 
+def display_with_l_option(formatted_file_info, files_size)
+  files_size.times do |index|
+    mode = formatted_file_info[:mode][index]
+    nlink = formatted_file_info[:nlink][index]
+    uid = formatted_file_info[:uid][index]
+    gid = formatted_file_info[:gid][index]
+    bytesize = formatted_file_info[:bytesize][index]
+    ctime = formatted_file_info[:ctime][index]
+    file = formatted_file_info[:name][index]
+    puts "#{mode} #{nlink} #{uid} #{gid} #{bytesize} #{ctime} #{file}"
+  end
+end
+
 def file_mode_drx(file_stat)
   file_type_lookup = {
     'directory' => 'd',
@@ -137,16 +150,7 @@ if !commandline_arguments.files.empty?
   if commandline_arguments.options[:l]
     file_info = file_info(files)
     formatted_file_info = format_file_info(file_info)
-    files.size.times do |index|
-      mode = formatted_file_info[:mode][index]
-      nlink = formatted_file_info[:nlink][index]
-      uid = formatted_file_info[:uid][index]
-      gid = formatted_file_info[:gid][index]
-      bytesize = formatted_file_info[:bytesize][index]
-      ctime = formatted_file_info[:ctime][index]
-      file = formatted_file_info[:name][index]
-      puts "#{mode} #{nlink} #{uid} #{gid} #{bytesize} #{ctime} #{file}"
-    end
+    display_with_l_option(formatted_file_info, files.size)
   else
     files = organize_files(files, DISPLAY_MAX_LINE)
     files = convert_to_displayable_array(files)
@@ -173,15 +177,9 @@ directories.each do |path|
           end
   files = files.sort.reverse if commandline_arguments.options[:r]
   if commandline_arguments.options[:l]
-    files.each do |file|
-      file_stat = File.lstat(File.expand_path(file, path))
-      mode = file_mode_drx(file_stat)
-      nlink = file_stat.nlink
-      uid = Etc.getpwuid(file_stat.uid).name
-      gid = Etc.getpwuid(file_stat.gid).name
-      ctime = file_stat.ctime.strftime('%m月 %d %H:%M')
-      puts "#{mode} #{nlink} #{uid} #{gid} #{file_stat.size} #{ctime} #{file}"
-    end
+    file_info = file_info(files, path)
+    formatted_file_info = format_file_info(file_info)
+    display_with_l_option(formatted_file_info, files.size)
   else
     ordered_files = organize_files(files, DISPLAY_MAX_LINE)
 
