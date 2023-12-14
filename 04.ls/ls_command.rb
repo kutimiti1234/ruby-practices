@@ -35,6 +35,41 @@ def parse_argv(argv)
   { directories: argv_directories, files: argv_files, errors: argv_errors }
 end
 
+def file_info(files, path = nil)
+  file_mode = []
+  file_nlink = []
+  file_uid = []
+  file_gid = []
+  file_bytesize = []
+  file_name = []
+  file_ctime = []
+
+  files.each do |file|
+    file_stat = File.lstat(File.expand_path(file, path))
+    file_mode << (file_mode_drx(file_stat))
+    file_nlink << file_stat.nlink
+    file_uid <<  Etc.getpwuid(file_stat.uid).name
+    file_gid <<  Etc.getpwuid(file_stat.gid).name
+    file_bytesize << file_stat.size
+    file_ctime << file_stat.ctime.strftime('%m月 %e %H:%M')
+    file_name << file
+  end
+  { mode: file_mode, nlink: file_nlink, uid: file_uid, gid: file_gid, bytesize: file_bytesize, ctime: file_ctime, name: file_name }
+end
+
+def format_file_info(file_info)
+  file_info.each_key do |key|
+    max_width = file_info[key].max_by(1, &:size).first.to_s.size
+    file_info[key] = file_info[key].map do |row|
+      if key == :name
+        row.to_s.ljust(max_width)
+      else
+        row.to_s.rjust(max_width)
+      end
+    end
+  end
+end
+
 def file_mode_drx(file_stat)
   file_type_lookup = {
     'directory' => 'd',
@@ -96,18 +131,21 @@ if !commandline_arguments.files.empty?
   files = if commandline_arguments.options[:r]
             commandline_arguments.files.sort.reverse
           else
-            commandline_arguments.files
+            commandline_arguments.files.sort
           end
 
   if commandline_arguments.options[:l]
-    files.each do |file|
-      file_stat = File.lstat(file)
-      mode = file_mode_drx(file_stat)
-      nlink = file_stat.nlink
-      uid = Etc.getpwuid(file_stat.uid).name
-      gid = Etc.getpwuid(file_stat.gid).name
-      ctime = file_stat.ctime.strftime('%m月 %d %H:%M')
-      puts "#{mode} #{nlink} #{uid} #{gid} #{file_stat.size} #{ctime} #{file}"
+    file_info = file_info(files)
+    formatted_file_info = format_file_info(file_info)
+    files.size.times do |index|
+      mode = formatted_file_info[:mode][index]
+      nlink = formatted_file_info[:nlink][index]
+      uid = formatted_file_info[:uid][index]
+      gid = formatted_file_info[:gid][index]
+      bytesize = formatted_file_info[:bytesize][index]
+      ctime = formatted_file_info[:ctime][index]
+      file = formatted_file_info[:name][index]
+      puts "#{mode} #{nlink} #{uid} #{gid} #{bytesize} #{ctime} #{file}"
     end
   else
     files = organize_files(files, DISPLAY_MAX_LINE)
