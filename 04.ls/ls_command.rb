@@ -32,7 +32,7 @@ def parse_argv(argv)
     end
   end
 
-  { directories: argv_directories, files: argv_files, errors: argv_errors }
+  { directories: argv_directories.sort, files: argv_files.sort, errors: argv_errors }
 end
 
 def file_info(files, path = nil)
