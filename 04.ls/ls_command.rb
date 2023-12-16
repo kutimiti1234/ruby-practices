@@ -43,7 +43,7 @@ def file_info(files, path = nil)
   file_bytesize = []
   file_name = []
   file_ctime = []
-
+  file_blocks = []
   files.each do |file|
     file_stat = File.lstat(File.expand_path(file, path))
     file_mode << (file_mode_drx(file_stat))
@@ -53,8 +53,11 @@ def file_info(files, path = nil)
     file_bytesize << file_stat.size
     file_ctime << file_stat.ctime.strftime('%m月 %e %H:%M')
     file_name << file
+
+    # File::statのブロックサイズの単位は512bytesであるから変換する
+    file_blocks << file_stat.blocks * (512 / BLOCK_SIZE.to_f)
   end
-  { mode: file_mode, nlink: file_nlink, uid: file_uid, gid: file_gid, bytesize: file_bytesize, ctime: file_ctime, name: file_name }
+  { mode: file_mode, nlink: file_nlink, uid: file_uid, gid: file_gid, bytesize: file_bytesize, ctime: file_ctime, name: file_name, block_size: file_blocks }
 end
 
 def format_file_info(file_info)
@@ -128,6 +131,7 @@ def display_directory(display_file_names_displayable)
 end
 
 DISPLAY_MAX_LINE = 3
+BLOCK_SIZE = 1024
 ParseResult = Data.define(:options, :directories, :files, :errors)
 argv_options = parse_and_remove_options(ARGV)
 argv_arguments = parse_argv(ARGV)
@@ -179,6 +183,7 @@ directories.each do |path|
   if commandline_arguments.options[:l]
     file_info = file_info(files, path)
     formatted_file_info = format_file_info(file_info)
+    puts "合計 #{formatted_file_info[:block_size].map(&:to_f).sum.to_i}"
     display_with_l_option(formatted_file_info, files.size)
   else
     ordered_files = organize_files(files, DISPLAY_MAX_LINE)
