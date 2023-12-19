@@ -87,13 +87,7 @@ def display_with_l_option(formatted_file_info, files_size)
 end
 
 def file_mode_drx(file_stat)
-  file_type_lookup = {
-    'directory' => 'd',
-    'file' => '-',
-    'link' => 'l'
-  }
-
-  file_type = file_type_lookup[file_stat.ftype]
+  file_type = FILE_TYPE_LOOKUP[file_stat.ftype]
   file_permissions = file_stat.mode.to_s(8).rjust(6, '0')[3..5].chars.map do |c|
     rwx = %w[- x w . r]
     rwx[c.to_i & 0b100] + rwx[c.to_i & 0b010] + rwx[c.to_i & 0b001]
@@ -126,12 +120,17 @@ def display_directory(display_file_names_displayable)
     cols.each_with_index do |cell, _col|
       print "#{cell}  "
     end
-    puts ''
+    puts
   end
 end
 
 DISPLAY_MAX_LINE = 3
 BLOCK_SIZE = 1024
+FILE_TYPE_LOOKUP = {
+  'directory' => 'd',
+  'file' => '-',
+  'link' => 'l'
+}.tap { |h| h.default = '-' }.freeze
 ParseResult = Data.define(:options, :directories, :files, :errors)
 argv_options = parse_and_remove_options(ARGV)
 argv_arguments = parse_argv(ARGV)
@@ -161,7 +160,7 @@ if !commandline_arguments.files.empty?
     display_directory(files)
 
   end
-  puts ''
+  puts
 end
 
 directories = if commandline_arguments.options[:r]
@@ -192,5 +191,5 @@ directories.each do |path|
 
     display_directory(displayable_files)
   end
-  puts ''
+  puts
 end
