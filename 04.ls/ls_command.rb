@@ -42,7 +42,7 @@ def file_info(files, path = nil)
   file_gid = []
   file_bytesize = []
   file_name = []
-  file_ctime = []
+  file_mtime = []
   file_blocks = []
   files.each do |file|
     file_stat = File.lstat(File.expand_path(file, path))
@@ -51,13 +51,13 @@ def file_info(files, path = nil)
     file_uid <<  Etc.getpwuid(file_stat.uid).name
     file_gid <<  Etc.getpwuid(file_stat.gid).name
     file_bytesize << file_stat.size
-    file_ctime << file_stat.ctime.strftime('%m月 %e %H:%M')
+    file_mtime << file_stat.mtime.strftime('%m月 %e %H:%M')
     file_name << file
 
     # File::statのブロックサイズの単位は512bytesであるから変換する
     file_blocks << file_stat.blocks * (512 / BLOCK_SIZE.to_f)
   end
-  { mode: file_mode, nlink: file_nlink, uid: file_uid, gid: file_gid, bytesize: file_bytesize, ctime: file_ctime, name: file_name, block_size: file_blocks }
+  { mode: file_mode, nlink: file_nlink, uid: file_uid, gid: file_gid, bytesize: file_bytesize, mtime: file_mtime, name: file_name, block_size: file_blocks }
 end
 
 def format_file_info(file_info)
@@ -80,9 +80,9 @@ def display_with_l_option(formatted_file_info, files_size)
     uid = formatted_file_info[:uid][index]
     gid = formatted_file_info[:gid][index]
     bytesize = formatted_file_info[:bytesize][index]
-    ctime = formatted_file_info[:ctime][index]
+    mtime = formatted_file_info[:mtime][index]
     file = formatted_file_info[:name][index]
-    puts "#{mode} #{nlink} #{uid} #{gid} #{bytesize} #{ctime} #{file}"
+    puts "#{mode} #{nlink} #{uid} #{gid} #{bytesize} #{mtime} #{file}"
   end
 end
 
