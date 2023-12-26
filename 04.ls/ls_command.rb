@@ -36,52 +36,49 @@ def parse_argv(argv)
 end
 
 def file_info(files, path = nil)
-  file_mode = []
-  file_nlink = []
-  file_uid = []
-  file_gid = []
-  file_bytesize = []
-  file_name = []
-  file_mtime = []
-  file_blocks = []
+  file_info = []
   files.each do |file|
     file_stat = File.lstat(File.expand_path(file, path))
-    file_mode << (file_mode_drx(file_stat))
-    file_nlink << file_stat.nlink
-    file_uid <<  Etc.getpwuid(file_stat.uid).name
-    file_gid <<  Etc.getpwuid(file_stat.gid).name
-    file_bytesize << file_stat.size
-    file_mtime << file_stat.mtime.strftime('%m月 %e %H:%M')
-    file_name << file
+    file_mode = file_mode_drx(file_stat)
+    file_nlink = file_stat.nlink
+    file_uid =  Etc.getpwuid(file_stat.uid).name
+    file_gid =  Etc.getpwuid(file_stat.gid).name
+    file_bytesize = file_stat.size
+    file_mtime = file_stat.mtime.strftime('%m月 %e %H:%M')
+    file_name = file
 
     # File::statのブロックサイズの単位は512bytesであるから変換する
-    file_blocks << file_stat.blocks * (512 / BLOCK_SIZE.to_f)
+    file_blocks = file_stat.blocks * (512 / BLOCK_SIZE.to_f)
+
+    file_info << { mode: file_mode, nlink: file_nlink, uid: file_uid, gid: file_gid, bytesize: file_bytesize, mtime: file_mtime, name: file_name,
+                   block_size: file_blocks }
   end
-  { mode: file_mode, nlink: file_nlink, uid: file_uid, gid: file_gid, bytesize: file_bytesize, mtime: file_mtime, name: file_name, block_size: file_blocks }
+  file_info
 end
 
 def format_file_info(file_info)
-  file_info.each_key do |key|
-    max_width = file_info[key].map(&:to_s).max_by(1, &:size).first.size
-    file_info[key] = file_info[key].map do |row|
-      if key == :name
-        row.to_s.ljust(max_width)
-      else
-        row.to_s.rjust(max_width)
-      end
+  file_info[0].each_key do |key|
+    max_width = file_info.map { |hash| hash[key] }.map(&:to_s).max_by(1, &:size).first.size
+    file_info.size.times do |index|
+      file_info[index][key] = if key == :name
+                                file_info[index][key].to_s.ljust(max_width, ' ')
+                              else
+                                file_info[index][key].to_s.rjust(max_width, ' ')
+                              end
     end
   end
+  file_info
 end
 
-def display_with_l_option(formatted_file_info, files_size)
-  files_size.times do |index|
-    mode = formatted_file_info[:mode][index]
-    nlink = formatted_file_info[:nlink][index]
-    uid = formatted_file_info[:uid][index]
-    gid = formatted_file_info[:gid][index]
-    bytesize = formatted_file_info[:bytesize][index]
-    mtime = formatted_file_info[:mtime][index]
-    file = formatted_file_info[:name][index]
+def display_with_l_option(formatted_file_info)
+  formatted_file_info.size.times do |index|
+    mode = formatted_file_info[index][:mode]
+    nlink = formatted_file_info[index][:nlink]
+    uid = formatted_file_info[index][:uid]
+    gid = formatted_file_info[index][:gid]
+    bytesize = formatted_file_info[index][:bytesize]
+    mtime = formatted_file_info[index][:mtime]
+    file = formatted_file_info[index][:name]
     puts "#{mode} #{nlink} #{uid} #{gid} #{bytesize} #{mtime} #{file}"
   end
 end
@@ -153,7 +150,7 @@ if !commandline_arguments.files.empty?
   if commandline_arguments.options[:l]
     file_info = file_info(files)
     formatted_file_info = format_file_info(file_info)
-    display_with_l_option(formatted_file_info, files.size)
+    display_with_l_option(formatted_file_info)
   else
     files = organize_files(files, DISPLAY_MAX_LINE)
     files = convert_to_displayable_array(files)
@@ -182,8 +179,8 @@ directories.each do |path|
   if commandline_arguments.options[:l]
     file_info = file_info(files, path)
     formatted_file_info = format_file_info(file_info)
-    puts "合計 #{formatted_file_info[:block_size].map(&:to_f).sum.to_i}"
-    display_with_l_option(formatted_file_info, files.size)
+    puts "合計 #{formatted_file_info.map { |hash| hash[:block_size].to_f }.sum.to_i}"
+    display_with_l_option(formatted_file_info)
   else
     ordered_files = organize_files(files, DISPLAY_MAX_LINE)
 
