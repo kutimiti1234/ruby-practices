@@ -36,7 +36,7 @@ def parse_argv(argv)
 end
 
 def file_info(files, path = nil)
-  file_info = []
+  file_infos = []
   files.each do |file|
     file_stat = File.lstat(File.expand_path(file, path))
     file_mode = file_mode_drx(file_stat)
@@ -50,35 +50,35 @@ def file_info(files, path = nil)
     # File::statのブロックサイズの単位は512bytesであるから変換する
     file_blocks = file_stat.blocks * (512 / BLOCK_SIZE.to_f)
 
-    file_info << { mode: file_mode, nlink: file_nlink, uid: file_uid, gid: file_gid, bytesize: file_bytesize, mtime: file_mtime, name: file_name,
-                   block_size: file_blocks }
+    file_infos << { mode: file_mode, nlink: file_nlink, uid: file_uid, gid: file_gid, bytesize: file_bytesize, mtime: file_mtime, name: file_name,
+                    block_size: file_blocks }
   end
-  file_info
+  file_infos
 end
 
-def format_file_info(file_info)
-  file_info[0].each_key do |key|
-    max_width = file_info.map { |hash| hash[key] }.map(&:to_s).max_by(1, &:size).first.size
-    file_info.size.times do |index|
-      file_info[index][key] = if key == :name
-                                file_info[index][key].to_s.ljust(max_width, ' ')
-                              else
-                                file_info[index][key].to_s.rjust(max_width, ' ')
-                              end
+def format_file_info(file_infos)
+  file_infos[0].each_key do |key|
+    max_width = file_infos.map { |hash| hash[key] }.map(&:to_s).max_by(1, &:size).first.size
+    file_infos.size.times do |index|
+      file_infos[index][key] = if key == :name
+                                 file_infos[index][key].to_s.ljust(max_width, ' ')
+                               else
+                                 file_infos[index][key].to_s.rjust(max_width, ' ')
+                               end
     end
   end
-  file_info
+  file_infos
 end
 
-def display_with_l_option(formatted_file_info)
-  formatted_file_info.size.times do |index|
-    mode = formatted_file_info[index][:mode]
-    nlink = formatted_file_info[index][:nlink]
-    uid = formatted_file_info[index][:uid]
-    gid = formatted_file_info[index][:gid]
-    bytesize = formatted_file_info[index][:bytesize]
-    mtime = formatted_file_info[index][:mtime]
-    file = formatted_file_info[index][:name]
+def display_with_l_option(formatted_file_infos)
+  formatted_file_infos.size.times do |index|
+    mode = formatted_file_infos[index][:mode]
+    nlink = formatted_file_infos[index][:nlink]
+    uid = formatted_file_infos[index][:uid]
+    gid = formatted_file_infos[index][:gid]
+    bytesize = formatted_file_infos[index][:bytesize]
+    mtime = formatted_file_infos[index][:mtime]
+    file = formatted_file_infos[index][:name]
     puts "#{mode} #{nlink} #{uid} #{gid} #{bytesize} #{mtime} #{file}"
   end
 end
@@ -148,9 +148,9 @@ if !commandline_arguments.files.empty?
           end
 
   if commandline_arguments.options[:l]
-    file_info = file_info(files)
-    formatted_file_info = format_file_info(file_info)
-    display_with_l_option(formatted_file_info)
+    file_infos = file_info(files)
+    formatted_file_infos = format_file_info(file_infos)
+    display_with_l_option(formatted_file_infos)
   else
     files = organize_files(files, DISPLAY_MAX_LINE)
     files = convert_to_displayable_array(files)
@@ -177,10 +177,10 @@ directories.each do |path|
           end
   files = files.sort.reverse if commandline_arguments.options[:r]
   if commandline_arguments.options[:l]
-    file_info = file_info(files, path)
-    formatted_file_info = format_file_info(file_info)
-    puts "合計 #{formatted_file_info.map { |hash| hash[:block_size].to_f }.sum.to_i}"
-    display_with_l_option(formatted_file_info)
+    file_infos = file_info(files, path)
+    formatted_file_infos = format_file_info(file_infos)
+    puts "合計 #{formatted_file_infos.map { |hash| hash[:block_size].to_f }.sum.to_i}"
+    display_with_l_option(formatted_file_infos)
   else
     ordered_files = organize_files(files, DISPLAY_MAX_LINE)
 
