@@ -5,19 +5,37 @@ require 'optparse'
 
 def main
   argv_options = parse_and_remove_options(ARGV)
-  while (input_text = ARGF.gets(nil))
+  output_text = []
+  ARGF.each(nil) do |input_text|
     wc_info = []
+    file_name = ARGF.filename
+    wc_info << [:filename, file_name]
+    wc_info << [:line, input_text.lines.count] if argv_options[:l]
+    wc_info << [:word, input_text.split(/\s+/).size] if argv_options[:w]
+    wc_info << [:bytesize, input_text.size] if argv_options[:c]
+    output_text << wc_info.to_h
+  end
 
-    wc_info = { line: count_line(input_text) } if argv_options[:l]
-    wc_info = { word: count_word(input_text) } if argv_options[:w]
-    wc_info = { bytesize: input_text.size } if argv_options[:c]
+  max_width = get_max_width(output_text)
+  print_output(output_text, max_width)
+end
 
-    puts "#{wc_info[:line] || ''} #{wc_info[:word] || ''}  #{wc_info[:bytesize] || ''}"
+def print_output(output_text, max_width)
+  output_text.each do |output_line|
+    long_sentence = "#{output_line[:line].to_s.rjust(max_width[:line_width] + 2) || ''} " \
+                    "#{output_line[:word].to_s.rjust(max_width[:word_width]) || ''} " \
+                    "#{output_line[:bytesize].to_s.rjust(max_width[:bytesize_width]) || ''} " \
+                    "#{output_line[:filename]}"
+    puts long_sentence
   end
 end
 
-def count_line(line); end
-def count_word(line); end
+def get_max_width(output_text)
+  max_lines_width = output_text.map { |entry| entry[:line].to_s.length }.max || 0
+  max_words_width = output_text.map { |entry| entry[:word].to_s.length }.max || 0
+  max_bytesizes_width = output_text.map { |entry| entry[:bytesize].to_s.length }.max || 0
+  { line_width: max_lines_width, word_width: max_words_width, bytesize_width: max_bytesizes_width }
+end
 
 def parse_and_remove_options(argv)
   argv_options = {}
@@ -25,7 +43,6 @@ def parse_and_remove_options(argv)
     opt.on('-l') { |v| argv_options[:l] = v }
     opt.on('-w') { |v| argv_options[:w] = v }
     opt.on('-c') { |v| argv_options[:c] = v }
-    # argvからオプションを取り除く
     opt.parse!(argv)
   end
 
