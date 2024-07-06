@@ -8,7 +8,7 @@ def main
   output_text = []
   ARGF.each(nil) do |input_text|
     wc_info = []
-    file_name = ARGF.filename
+    file_name = ARGF.filename == "-" ? nil : ARGF.filename
     wc_info << [:filename, file_name]
     wc_info << [:line, input_text.lines.count] if argv_options[:l]
     wc_info << [:word, input_text.split(/\s+/).size] if argv_options[:w]
@@ -32,16 +32,16 @@ def print_output(output_text, max_width)
   output_text.each do |output_line|
     long_sentence = "#{output_line[:line].to_s.rjust(max_width[:line_display_width]) || ''}" \
                     "#{output_line[:word].to_s.rjust(max_width[:word_display_width]) || ''}" \
-                    "#{output_line[:bytesize].to_s.rjust(max_width[:bytesize_display_width] ).concat(' ') || ''}" \
-                    "#{output_line[:filename]}"
+                    "#{output_line[:bytesize].to_s.rjust(max_width[:bytesize_display_width] ) || ''}" \
+                    " #{output_line[:filename]}"
     puts long_sentence
   end
 end
 
 def get_max_width(output_text)
-  max_lines_width = output_text.map { |entry| entry[:line].to_s.length }.max + DISPLAY_ADJUST_NUMBER || 0
+  max_lines_width = output_text.map { |entry| entry[:line].to_s.length }.max || 0
   max_words_width = output_text.map { |entry| entry[:word].to_s.length }.max + DISPLAY_ADJUST_NUMBER || 0
-  max_bytesizes_width = output_text.map { |entry| entry[:bytesize].to_s.length }.max || 0
+  max_bytesizes_width = output_text.map { |entry| entry[:bytesize].to_s.length + DISPLAY_ADJUST_NUMBER }.max || 0
   { line_display_width: max_lines_width, word_display_width: max_words_width, bytesize_display_width: max_bytesizes_width }
 end
 
