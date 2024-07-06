@@ -20,13 +20,11 @@ def main
   print_output(output_text, max_width)
 end
 
-DISPLAY_ADJUST_NUMBER = 1
-
 def print_output(output_text, max_width)
   output_text.each do |output_line|
     long_sentence = "#{output_line[:line].to_s.rjust(max_width[:line_display_witdh]) || ''}" \
-                    "#{output_line[:word].to_s.rjust(max_width[:word_display_width]+DISPLAY_ADJUST_NUMBER) || ''}" \
-                    "#{output_line[:bytesize].to_s.rjust(max_width[:bytesize_display_width]+DISPLAY_ADJUST_NUMBER) || ''}" \
+                    "#{output_line[:word].to_s.rjust(max_width[:word_display_width]) || ''}" \
+                    "#{output_line[:bytesize].to_s.rjust(max_width[:bytesize_display_width]) || ''}" \
                     "#{output_line[:filename]}"
     puts long_sentence
   end
@@ -36,7 +34,7 @@ def get_max_width(output_text)
   max_lines_width = output_text.map { |entry| entry[:line].to_s.length }.max || 0
   max_words_width = output_text.map { |entry| entry[:word].to_s.length }.max || 0
   max_bytesizes_width = output_text.map { |entry| entry[:bytesize].to_s.length }.max || 0
-  { line_display_witdh: max_lines_width, word_display_width: max_words_width, bytesize_display_width: max_bytesizes_width }
+  { line_word_width: max_lines_width, word_display_width: max_words_width, bytesize_display_width: max_bytesizes_width }
 end
 
 def parse_and_remove_options(argv)
