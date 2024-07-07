@@ -15,12 +15,13 @@ def main
     wc_info << [:bytesize, input_text.size] if argv_options[:c]
     output_text << wc_info.to_h
   end
-  output_text << file_total_info(output_text)
+  output_text << file_total_info(output_text) if output_text.size > MULTIPLE_DISPLAY
   max_width = get_max_width(output_text)
   print_output(output_text, max_width)
 end
 
 DISPLAY_ADJUST_NUMBER = 1
+MULTIPLE_DISPLAY = 2
 TOTAL = '合計'
 
 def file_total_info(output_text)
@@ -30,12 +31,17 @@ end
 
 def print_output(output_text, max_width)
   output_text.each do |output_line|
-    long_sentence = "#{output_line[:line]&.to_s&.rjust(max_width[:line_display_width])}"\
-                    "#{output_line[:word]&.to_s&.rjust(max_width[:word_display_width])}"\
-                    "#{output_line[:bytesize]&.to_s&.rjust(max_width[:bytesize_display_width])}"\
-                    " #{output_line[:filename] == '-' ? nil : output_line[:filename]}"
-    puts long_sentence
+    puts format_output_line(output_line, max_width)
   end
+end
+
+def format_output_line(output_line, max_width)
+  line = output_line[:line]&.to_s&.rjust(max_width[:line_display_width])
+  word = output_line[:word]&.to_s&.rjust(max_width[:word_display_width])
+  bytesize = output_line[:bytesize]&.to_s&.rjust(max_width[:bytesize_display_width])
+  filename = output_line[:filename] == '-' ? '' : output_line[:filename]
+
+  "#{line}#{word}#{bytesize} #{filename}"
 end
 
 def get_max_width(output_text)
