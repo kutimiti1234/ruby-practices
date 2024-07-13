@@ -25,8 +25,11 @@ def main
 end
 
 def file_total_info(output_texts)
-  file_total_info = output_texts.flat_map(&:to_a).group_by(&:first).reject { |k, _v| k == :filename }
-  file_total_info.transform_values { |value| value.map(&:last).sum }.merge(filename: TOTAL)
+  file_total_info = output_texts.inject({}) do |result, hash|
+    result.merge(hash) { |_key, oldvalue, newval| oldvalue + newval }
+  end
+  file_total_info[:filename] = TOTAL
+  file_total_info
 end
 
 def print_output(output_text, max_width)
@@ -34,7 +37,7 @@ def print_output(output_text, max_width)
     line = output_line[:line].to_s.rjust(max_width[:line]) if output_line[:line]
     word = output_line[:word].to_s.rjust(max_width[:word]) if output_line[:word]
     bytesize = output_line[:bytesize]&.to_s&.rjust(max_width[:bytesize])
-    filename = output_line[:filename] 
+    filename = output_line[:filename]
 
     puts "#{line}#{word}#{bytesize} #{filename}"
   end
