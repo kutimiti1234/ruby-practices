@@ -26,7 +26,7 @@ end
 
 def file_total_info(output_texts)
   file_total_info = output_texts.inject({}) do |result, hash|
-    result.merge(hash) { |_key, val1, val2| val1 + val2 }
+    result.merge(hash) { |_key, current_val, new_val| current_val + new_val }
   end
   file_total_info[:filename] = TOTAL
   file_total_info
