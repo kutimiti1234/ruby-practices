@@ -3,6 +3,10 @@
 
 require 'optparse'
 
+DDISPLAY_ADJUST_LENGTH = 1
+MULTIPLE_DISPLAY = 1
+TOTAL = '合計'
+
 def main
   options = parse_options(ARGV)
   output_texts = []
@@ -20,9 +24,6 @@ def main
   print_output(output_texts, max_width)
 end
 
-DDISPLAY_ADJUST_LENGTH = 1
-MULTIPLE_DISPLAY = 1
-TOTAL = '合計'
 
 def file_total_info(output_texts)
   file_total_info = output_texts.flat_map(&:to_a).group_by(&:first).reject { |k, _v| k == :filename }
