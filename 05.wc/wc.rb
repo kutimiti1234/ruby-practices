@@ -36,7 +36,7 @@ def print_output(output_text, max_width)
   output_text.each do |output_line|
     line = output_line[:line].to_s.rjust(max_width[:line]) if output_line[:line]
     word = output_line[:word].to_s.rjust(max_width[:word]) if output_line[:word]
-    bytesize = output_line[:bytesize]&.to_s&.rjust(max_width[:bytesize])
+    bytesize = output_line[:bytesize].to_s.rjust(max_width[:bytesize])
     filename = output_line[:filename]
 
     puts "#{line}#{word}#{bytesize} #{filename}"
