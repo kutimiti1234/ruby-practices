@@ -24,7 +24,6 @@ def main
   print_output(output_texts, max_width)
 end
 
-
 def file_total_info(output_texts)
   file_total_info = output_texts.flat_map(&:to_a).group_by(&:first).reject { |k, _v| k == :filename }
   file_total_info.transform_values { |value| value.map(&:last).sum }.merge(filename: TOTAL)
@@ -32,17 +31,13 @@ end
 
 def print_output(output_text, max_width)
   output_text.each do |output_line|
-    puts format_output_line(output_line, max_width)
+    line = output_line[:line].to_s.rjust(max_width[:line]) if output_line[:line]
+    word = output_line[:word].to_s.rjust(max_width[:word]) if output_line[:word]
+    bytesize = output_line[:bytesize]&.to_s&.rjust(max_width[:bytesize])
+    filename = output_line[:filename] 
+
+    puts "#{line}#{word}#{bytesize} #{filename}"
   end
-end
-
-def format_output_line(output_line, max_width)
-  line = output_line[:line]&.to_s&.rjust(max_width[:line])
-  word = output_line[:word]&.to_s&.rjust(max_width[:word])
-  bytesize = output_line[:bytesize]&.to_s&.rjust(max_width[:bytesize])
-  filename = output_line[:filename] == '-' ? '' : output_line[:filename]
-
-  "#{line}#{word}#{bytesize} #{filename}"
 end
 
 def get_max_widths(output_text)
