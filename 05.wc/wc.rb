@@ -3,7 +3,6 @@
 
 require 'optparse'
 
-DDISPLAY_ADJUST_LENGTH = 1
 MULTIPLE_DISPLAY = 1
 TOTAL = '合計'
 
@@ -19,7 +18,8 @@ def main
     wc_info[:bytesize] = input_text.size if options[:c]
     output_texts << wc_info
   end
-  output_texts << file_total_info(output_texts) if output_texts.size > MULTIPLE_DISPLAY
+  # 複数行出力する場合は、集計行を表示する
+  output_texts << file_total_info(output_texts) if output_texts.size > 2
   max_width = get_max_widths(output_texts)
   print_output(output_texts, max_width)
 end
