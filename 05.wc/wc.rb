@@ -20,7 +20,7 @@ def main
   end
   wc_results = wc_count_results
   # 複数行出力する場合は、集計行を表示する
-  wc_results << get_total_row(wc_count_results) if wc_count_results.size > 2
+  wc_results << get_total_row(wc_count_results) if wc_count_results.size > 1
   max_column_widths = get_max_column_widths(wc_results)
   show_wc_results(wc_results, max_column_widths)
 end
