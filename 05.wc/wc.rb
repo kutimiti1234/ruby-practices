@@ -10,13 +10,13 @@ TOTAL = '合計'
 def main
   options = parse_options(ARGV)
   counts = []
-  ARGF.each(nil) do |input_text|
+  ARGF.each(nil) do |standard_input_or_file|
     count = {}
 
     count[:filename] = ARGF.filename
-    count[:line] = input_text.lines.count if options[:l]
-    count[:word] = input_text.split(/\s+/).size if options[:w]
-    count[:bytesize] = input_text.size if options[:c]
+    count[:line] = standard_input_or_file.lines.count if options[:l]
+    count[:word] = standard_input_or_file.split(/\s+/).size if options[:w]
+    count[:bytesize] = standard_input_or_file.size if options[:c]
     counts << count
   end
   rows = counts
@@ -26,7 +26,7 @@ def main
   show_wc_rows(rows, max_column_widths)
 end
 
-def get__total_row(counts)
+def get_wc_total_row(counts)
   total_row = counts.inject({}) do |result, column_name|
     result.merge(column_name) { |_key, current_val, adding_value| current_val + adding_value }
   end
