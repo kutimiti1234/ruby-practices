@@ -4,6 +4,7 @@
 require 'optparse'
 
 SHOW_ADJUST_SPACE_SIZE = 1
+STANDARD_INPUT_EXCEPTIONAL_WORD = '-'
 TOTAL = '合計'
 
 def main
@@ -25,7 +26,7 @@ def main
   show_wc_rows(rows, max_column_widths)
 end
 
-def get_wc_total_row(counts)
+def get__total_row(counts)
   total_row = counts.inject({}) do |result, column_name|
     result.merge(column_name) { |_key, current_val, adding_value| current_val + adding_value }
   end
@@ -38,7 +39,8 @@ def show_wc_rows(rows, max_column_widths)
     cells = {}
     row.each_pair do |column_name, cell|
       cells[column_name] = if column_name == :filename
-                             cell
+                             # 標準入力を受け取る際に例外的に"-"が入力されるため除外する
+                             cell unless cell == STANDARD_INPUT_EXCEPTIONAL_WORD
                            else
                              cell.to_s.rjust(max_column_widths[column_name] + SHOW_ADJUST_SPACE_SIZE)
                            end
