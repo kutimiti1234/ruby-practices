@@ -3,7 +3,7 @@
 
 require 'optparse'
 
-MULTIPLE_DISPLAY = 1
+DDISPLAY_ADJUST_LENGTH = 1
 TOTAL = '合計'
 
 def main
