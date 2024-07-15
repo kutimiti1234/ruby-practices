@@ -60,7 +60,7 @@ def parse_options(argv)
     opt.parse!(argv)
   end
 
-  unless options.key?(:l) || options.key?(:w) || options.key?(:c)
+  if options.empty?
     options[:l] = true
     options[:w] = true
     options[:c] = true
