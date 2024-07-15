@@ -8,45 +8,46 @@ TOTAL = '合計'
 
 def main
   options = parse_options(ARGV)
-  output_texts = []
+  wc_count_results = []
   ARGF.each(nil) do |input_text|
-    wc_info = {}
+    wc_count_result = {}
 
-    wc_info[:filename] = ARGF.filename
-    wc_info[:line] = input_text.lines.count if options[:l]
-    wc_info[:word] = input_text.split(/\s+/).size if options[:w]
-    wc_info[:bytesize] = input_text.size if options[:c]
-    output_texts << wc_info
+    wc_count_result[:filename] = ARGF.filename
+    wc_count_result[:line] = input_text.lines.count if options[:l]
+    wc_count_result[:word] = input_text.split(/\s+/).size if options[:w]
+    wc_count_result[:bytesize] = input_text.size if options[:c]
+    wc_count_results << wc_count_result
   end
+  wc_results = wc_count_results
   # 複数行出力する場合は、集計行を表示する
-  output_texts << file_total_info(output_texts) if output_texts.size > 2
-  max_width = get_max_widths(output_texts)
-  print_output(output_texts, max_width)
+  wc_results << get_total_row(wc_count_results) if wc_count_results.size > 2
+  max_column_widths = get_max_column_widths(wc_results)
+  show_wc_results(wc_results, max_column_widths)
 end
 
-def file_total_info(output_texts)
-  file_total_info = output_texts.inject({}) do |result, hash|
-    result.merge(hash) { |_key, current_val, new_val| current_val + new_val }
+def get_total_row(wc_count_results)
+  total_row = wc_count_results.inject({}) do |result, wc_count_data|
+    result.merge(wc_count_data) { |_key, current_val, adding_value| current_val + adding_value }
   end
-  file_total_info[:filename] = TOTAL
-  file_total_info
+  total_row[:filename] = TOTAL
+  total_row
 end
 
-def print_output(output_text, max_width)
-  output_text.each do |output_line|
-    line = output_line[:line].to_s.rjust(max_width[:line]) if output_line[:line]
-    word = output_line[:word].to_s.rjust(max_width[:word]) if output_line[:word]
-    bytesize = output_line[:bytesize].to_s.rjust(max_width[:bytesize])
+def show_wc_results(wc_results, max_column_widths)
+  wc_results.each do |output_line|
+    line = output_line[:line].to_s.rjust(max_column_widths[:line]) if output_line[:line]
+    word = output_line[:word].to_s.rjust(max_column_widths[:word]) if output_line[:word]
+    bytesize = output_line[:bytesize].to_s.rjust(max_column_widths[:bytesize])
     filename = output_line[:filename]
 
     puts "#{line}#{word}#{bytesize} #{filename}"
   end
 end
 
-def get_max_widths(output_text)
-  max_lines_width = output_text.map { |entry| entry[:line].to_s.length + DDISPLAY_ADJUST_LENGTH }.max
-  max_words_width = output_text.map { |entry| entry[:word].to_s.length + DDISPLAY_ADJUST_LENGTH }.max
-  max_bytesizes_width = output_text.map { |entry| entry[:bytesize].to_s.length + DDISPLAY_ADJUST_LENGTH }.max
+def get_max_column_widths(wc_results)
+  max_lines_width = wc_results.map { |entry| entry[:line].to_s.length + DDISPLAY_ADJUST_LENGTH }.max
+  max_words_width = wc_results.map { |entry| entry[:word].to_s.length + DDISPLAY_ADJUST_LENGTH }.max
+  max_bytesizes_width = wc_results.map { |entry| entry[:bytesize].to_s.length + DDISPLAY_ADJUST_LENGTH }.max
   { line: max_lines_width, word: max_words_width, bytesize: max_bytesizes_width }
 end
 
