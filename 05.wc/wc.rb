@@ -35,9 +35,9 @@ end
 
 def show_wc_results(wc_results, max_column_widths)
   wc_results.each do |output_line|
-    line = output_line[:line].to_s.rjust(max_column_widths[:line]) if output_line[:line]
-    word = output_line[:word].to_s.rjust(max_column_widths[:word]) if output_line[:word]
-    bytesize = output_line[:bytesize].to_s.rjust(max_column_widths[:bytesize])
+    line = output_line[:line].to_s.rjust(max_column_widths[:line] + DDISPLAY_ADJUST_LENGTH) if output_line[:line]
+    word = output_line[:word].to_s.rjust(max_column_widths[:word] + DDISPLAY_ADJUST_LENGTH) if output_line[:word]
+    bytesize = output_line[:bytesize].to_s.rjust(max_column_widths[:bytesize] + DDISPLAY_ADJUST_LENGTH)
     filename = output_line[:filename]
 
     puts "#{line}#{word}#{bytesize} #{filename}"
@@ -45,9 +45,9 @@ def show_wc_results(wc_results, max_column_widths)
 end
 
 def get_max_column_widths(wc_results)
-  max_lines_width = wc_results.map { |entry| entry[:line].to_s.length + DDISPLAY_ADJUST_LENGTH }.max
-  max_words_width = wc_results.map { |entry| entry[:word].to_s.length + DDISPLAY_ADJUST_LENGTH }.max
-  max_bytesizes_width = wc_results.map { |entry| entry[:bytesize].to_s.length + DDISPLAY_ADJUST_LENGTH }.max
+  max_lines_width = wc_results.map { |entry| entry[:line].to_s.length  }.max
+  max_words_width = wc_results.map { |entry| entry[:word].to_s.length  }.max
+  max_bytesizes_width = wc_results.map { |entry| entry[:bytesize].to_s.length }.max
   { line: max_lines_width, word: max_words_width, bytesize: max_bytesizes_width }
 end
 
