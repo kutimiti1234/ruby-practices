@@ -11,8 +11,8 @@ def main
   output_texts = []
   ARGF.each(nil) do |input_text|
     wc_info = {}
-    file_name = ARGF.filename
-    wc_info[:filename] = file_name
+
+    wc_info[:filename] = ARGF.filename
     wc_info[:line] = input_text.lines.count if options[:l]
     wc_info[:word] = input_text.split(/\s+/).size if options[:w]
     wc_info[:bytesize] = input_text.size if options[:c]
