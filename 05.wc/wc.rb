@@ -3,51 +3,54 @@
 
 require 'optparse'
 
-DDISPLAY_ADJUST_LENGTH = 1
+SHOW_ADJUST_SPACE_SIZE = 1
 TOTAL = '合計'
 
 def main
   options = parse_options(ARGV)
-  wc_count_results = []
+  counts = []
   ARGF.each(nil) do |input_text|
-    wc_count_result = {}
+    count = {}
 
-    wc_count_result[:filename] = ARGF.filename
-    wc_count_result[:line] = input_text.lines.count if options[:l]
-    wc_count_result[:word] = input_text.split(/\s+/).size if options[:w]
-    wc_count_result[:bytesize] = input_text.size if options[:c]
-    wc_count_results << wc_count_result
+    count[:filename] = ARGF.filename
+    count[:line] = input_text.lines.count if options[:l]
+    count[:word] = input_text.split(/\s+/).size if options[:w]
+    count[:bytesize] = input_text.size if options[:c]
+    counts << count
   end
-  wc_results = wc_count_results
+  rows = counts
   # 複数行出力する場合は、集計行を表示する
-  wc_results << get_total_row(wc_count_results) if wc_count_results.size > 1
-  max_column_widths = get_max_column_widths(wc_results)
-  show_wc_results(wc_results, max_column_widths)
+  rows << get_wc_total_row(counts) if counts.size > 1
+  max_column_widths = get_max_column_widths(rows)
+  show_wc_rows(rows, max_column_widths)
 end
 
-def get_total_row(wc_count_results)
-  total_row = wc_count_results.inject({}) do |result, wc_count_data|
-    result.merge(wc_count_data) { |_key, current_val, adding_value| current_val + adding_value }
+def get_wc_total_row(counts)
+  total_row = counts.inject({}) do |result, column_name|
+    result.merge(column_name) { |_key, current_val, adding_value| current_val + adding_value }
   end
   total_row[:filename] = TOTAL
   total_row
 end
 
-def show_wc_results(wc_results, max_column_widths)
-  wc_results.each do |output_line|
-    line = output_line[:line].to_s.rjust(max_column_widths[:line] + DDISPLAY_ADJUST_LENGTH) if output_line[:line]
-    word = output_line[:word].to_s.rjust(max_column_widths[:word] + DDISPLAY_ADJUST_LENGTH) if output_line[:word]
-    bytesize = output_line[:bytesize].to_s.rjust(max_column_widths[:bytesize] + DDISPLAY_ADJUST_LENGTH)
-    filename = output_line[:filename]
-
-    puts "#{line}#{word}#{bytesize} #{filename}"
+def show_wc_rows(rows, max_column_widths)
+  rows.each do |row|
+    cells = {}
+    row.each_pair do |column_name, cell|
+      cells[column_name] = if column_name == :filename
+                             cell
+                           else
+                             cell.to_s.rjust(max_column_widths[column_name] + SHOW_ADJUST_SPACE_SIZE)
+                           end
+    end
+    puts "#{cells[:line]}#{cells[:word]}#{cells[:bytesize]} #{cells[:filename]}"
   end
 end
 
-def get_max_column_widths(wc_results)
-  max_lines_width = wc_results.map { |entry| entry[:line].to_s.length  }.max
-  max_words_width = wc_results.map { |entry| entry[:word].to_s.length  }.max
-  max_bytesizes_width = wc_results.map { |entry| entry[:bytesize].to_s.length }.max
+def get_max_column_widths(wc_rows)
+  max_lines_width = wc_rows.map { |entry| entry[:line].to_s.length  }.max
+  max_words_width = wc_rows.map { |entry| entry[:word].to_s.length  }.max
+  max_bytesizes_width = wc_rows.map { |entry| entry[:bytesize].to_s.length }.max
   { line: max_lines_width, word: max_words_width, bytesize: max_bytesizes_width }
 end
 
