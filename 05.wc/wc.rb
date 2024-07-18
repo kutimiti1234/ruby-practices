@@ -52,8 +52,8 @@ end
 def calculate_max_widths(rows)
   max_widths = {}
   keys = rows.map(&:keys).flatten.uniq
-  keys.each do |name|
-    max_widths[name] = rows.map { |entry| entry[name].to_s.length }.max unless name == :filename
+  keys.each do |key|
+    max_widths[key] = rows.map { |entry| entry[key].to_s.length }.max unless key == :filename
   end
   max_widths
 end
