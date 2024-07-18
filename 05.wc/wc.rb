@@ -9,53 +9,51 @@ TOTAL = '合計'
 
 def main
   options = parse_options(ARGV)
-  counts = []
+  rows = []
   ARGF.each(nil) do |input_text|
-    count = {}
+    counts = {}
 
-    count[:filename] = ARGF.filename
-    count[:line] = input_text.lines.count if options[:l]
-    count[:word] = input_text.split(/\s+/).size if options[:w]
-    count[:bytesize] = input_text.size if options[:c]
-    counts << count
+    counts[:filename] = ARGF.filename
+    counts[:line] = input_text.lines.count if options[:l]
+    counts[:word] = input_text.split(/\s+/).size if options[:w]
+    counts[:byte] = input_text.size if options[:c]
+    rows << counts
   end
-  counts << calculate_counts_total(counts) if counts.size > 1
-  max_column_widths = calculate_wc_max_column_widths(counts)
-  show_wc_rows(counts, max_column_widths)
+  rows << calculate_total_rows(rows) if rows.size > 1
+  max_widths = calculate_max_widths(rows)
+  show_rows(rows, max_widths)
 end
 
-def calculate_counts_total(counts)
-  counts_without_filename = counts.map { |count| count.except(:filename) }
-
-  total = counts_without_filename.inject({}) do |result, count|
-    result.merge(count) do |_key, current_val, adding_value|
-      current_val + adding_value
+def calculate_total_rows(rows)
+  total = rows.inject({}) do |result, count|
+    result.merge(count) do |key, current_val, adding_value|
+      current_val + adding_value unless key == :filename
     end
   end
   total[:filename] = TOTAL
   total
 end
 
-def show_wc_rows(rows, max_column_widths)
+def show_rows(rows, max_column_widths)
   rows.each do |row|
-    cells = {}
-    row.each do |column_name, cell|
-      cells[column_name] = if column_name == :filename
-                             cell unless cell == STDIN_FILENAME
-                           else
-                             column_width = max_column_widths[column_name] + SEPARATOR_SIZE
-                             cell.to_s.rjust(column_width)
-                           end
+    columns = {}
+    row.each do |name, value|
+      columns[name] = if name == :filename
+                        value unless value == STDIN_FILENAME
+                      else
+                        column_width = max_column_widths[name]
+                        value.to_s.rjust(column_width) + ' ' * SEPARATOR_SIZE
+                      end
     end
-    puts "#{cells[:line]}#{cells[:word]}#{cells[:bytesize]} #{cells[:filename]}"
+    puts columns.values_at(:line, :word, :byte, :filename).join
   end
 end
 
-def calculate_wc_max_column_widths(rows)
+def calculate_max_widths(rows)
   max_lines_width = rows.map { |entry| entry[:line].to_s.length }.max
   max_words_width = rows.map { |entry| entry[:word].to_s.length }.max
-  max_bytesizes_width = rows.map { |entry| entry[:bytesize].to_s.length }.max
-  { line: max_lines_width, word: max_words_width, bytesize: max_bytesizes_width }
+  max_bytes_width = rows.map { |entry| entry[:byte].to_s.length }.max
+  { line: max_lines_width, word: max_words_width, byte: max_bytes_width }
 end
 
 def parse_options(argv)
