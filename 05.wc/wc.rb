@@ -50,10 +50,12 @@ def show_rows(rows, max_column_widths)
 end
 
 def calculate_max_widths(rows)
-  max_lines_width = rows.map { |entry| entry[:line].to_s.length }.max
-  max_words_width = rows.map { |entry| entry[:word].to_s.length }.max
-  max_bytes_width = rows.map { |entry| entry[:byte].to_s.length }.max
-  { line: max_lines_width, word: max_words_width, byte: max_bytes_width }
+  max_widths = {}
+  keys = rows.map(&:keys).flatten.uniq
+  keys.each do |name|
+    max_widths[name] = rows.map { |entry| entry[name].to_s.length }.max unless name == :filename
+  end
+  max_widths
 end
 
 def parse_options(argv)
