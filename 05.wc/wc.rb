@@ -49,12 +49,10 @@ def show_rows(rows, max_widths)
 end
 
 def calculate_max_widths(rows)
-  max_widths = {}
-  max_widths = %i[line word byte].to_h do |name|
+  %i[line word byte].to_h do |name|
     max_width = rows.map { |counts| counts[name].to_s.length }.max
-    [name,max_width]
+    [name, max_width]
   end
-  max_widths
 end
 
 def parse_options(argv)
