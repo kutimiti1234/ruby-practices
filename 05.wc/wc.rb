@@ -3,7 +3,6 @@
 
 require 'optparse'
 
-SEPARATOR_SIZE = 1
 STDIN_FILENAME = '-'
 TOTAL = '合計'
 
@@ -42,10 +41,10 @@ def show_rows(rows, max_column_widths)
                         value unless value == STDIN_FILENAME
                       else
                         column_width = max_column_widths[name]
-                        value.to_s.rjust(column_width) + ' ' * SEPARATOR_SIZE
+                        value.to_s.rjust(column_width)
                       end
     end
-    puts columns.values_at(:line, :word, :byte, :filename).join
+    puts columns.values_at(:line, :word, :byte, :filename).join(' ')
   end
 end
 
