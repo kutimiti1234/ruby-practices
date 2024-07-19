@@ -67,7 +67,6 @@ def parse_options(argv)
   end
 
   options.empty? ? { l: true, w: true, c: true } : options
-  options
 end
 
 main
