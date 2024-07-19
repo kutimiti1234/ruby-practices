@@ -24,8 +24,8 @@ def main
 end
 
 def calculate_total_rows(rows)
-  total = rows.inject({}) do |result, count|
-    result.merge(count) do |key, current_val, adding_value|
+  total = rows.inject({}) do |result, counts|
+    result.merge(counts) do |key, current_val, adding_value|
       current_val + adding_value unless key == :filename
     end
   end
@@ -33,15 +33,15 @@ def calculate_total_rows(rows)
   total
 end
 
-def show_rows(rows, max_column_widths)
-  rows.each do |row|
+def show_rows(rows, max_widths)
+  rows.each do |counts|
     columns = {}
-    row.each do |name, value|
+    counts.each do |name, value|
       columns[name] = if name == :filename
                         value unless value == STDIN_FILENAME
                       else
-                        column_width = max_column_widths[name]
-                        value.to_s.rjust(column_width)
+                        width = max_widths[name]
+                        value.to_s.rjust(width)
                       end
     end
     puts columns.values_at(:line, :word, :byte, :filename).join(' ')
@@ -66,11 +66,7 @@ def parse_options(argv)
     opt.parse!(argv)
   end
 
-  if options.empty?
-    options[:l] = true
-    options[:w] = true
-    options[:c] = true
-  end
+  options.empty? ? { l: true, w: true, c: true } : options
   options
 end
 
