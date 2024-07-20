@@ -3,7 +3,7 @@
 
 require 'optparse'
 
-STDIN_FILENAME = /^-$/
+STDIN_PATTERN = /^-$/
 TOTAL = '合計'
 
 def main
@@ -40,14 +40,9 @@ end
 def show_rows(rows)
   max_widths = calculate_max_widths(rows)
   rows.each do |counts|
-    columns = {}
-    counts.each do |name, value|
-      columns[name] = if name == :filename
-                        value.sub(STDIN_FILENAME,"")
-                      else
-                        width = max_widths[name]
-                        value.to_s.rjust(width)
-                      end
+    columns = counts.to_h do |name, value|
+      text = name == :filename ? value.sub(STDIN_PATTERN, '') : value.to_s.rjust(max_widths[name])
+      [name, text]
     end
     puts columns.values_at(:line, :word, :byte, :filename).join(' ')
   end
