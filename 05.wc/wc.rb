@@ -9,7 +9,6 @@ TOTAL = '合計'
 def main
   options = parse_options(ARGV)
   rows = build_rows(options)
-  rows << calculate_total_rows(rows) if rows.size > 1
   show_rows(rows)
 end
 
@@ -24,6 +23,7 @@ def build_rows(options)
     counts[:byte] = input_text.size if options[:c]
     rows << counts
   end
+  rows << calculate_total_rows(rows) if rows.size > 1
   rows
 end
 
