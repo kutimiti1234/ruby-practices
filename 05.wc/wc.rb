@@ -10,8 +10,7 @@ def main
   options = parse_options(ARGV)
   rows = build_rows(options)
   rows << calculate_total_rows(rows) if rows.size > 1
-  max_widths = calculate_max_widths(rows)
-  show_rows(rows, max_widths)
+  show_rows(rows)
 end
 
 def build_rows(options)
@@ -38,7 +37,8 @@ def calculate_total_rows(rows)
   total
 end
 
-def show_rows(rows, max_widths)
+def show_rows(rows)
+  max_widths = calculate_max_widths(rows)
   rows.each do |counts|
     columns = {}
     counts.each do |name, value|
