@@ -8,6 +8,13 @@ TOTAL = '合計'
 
 def main
   options = parse_options(ARGV)
+  rows = build_rows(options)
+  rows << calculate_total_rows(rows) if rows.size > 1
+  max_widths = calculate_max_widths(rows)
+  show_rows(rows, max_widths)
+end
+
+def build_rows(options)
   rows = []
   ARGF.each(nil) do |input_text|
     counts = {}
@@ -18,9 +25,7 @@ def main
     counts[:byte] = input_text.size if options[:c]
     rows << counts
   end
-  rows << calculate_total_rows(rows) if rows.size > 1
-  max_widths = calculate_max_widths(rows)
-  show_rows(rows, max_widths)
+  rows
 end
 
 def calculate_total_rows(rows)
