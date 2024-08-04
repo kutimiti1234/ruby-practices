@@ -6,52 +6,54 @@ require_relative 'frame'
 STRIKE = 'X'
 
 class Game
-
   def initialize
-    @frames = []
+    @frames = parse_marks
   end
 
   def score
-    parse_marks
-    basic_score + bonus_score
+    calculate_basic_score + calculate_bonus_score
   end
 
   private
 
   def parse_marks
-    marks = ARGV[0]
-    pins = marks.split(',')
-
+    pins = ARGV[0].split(',')
+    frames = []
     9.times do
       rolls = pins.shift(2)
       if rolls.first == STRIKE
-        @frames << Frame.new(rolls.first)
+        frames << Frame.new(rolls.first)
         pins.unshift rolls.last
       else
-        @frames << Frame.new(*rolls)
+        frames << Frame.new(*rolls)
       end
     end
 
-    @frames << Frame.new(*pins)
+    frames << Frame.new(*pins)
   end
 
-  def basic_score
+  def calculate_basic_score
     @frames.map(&:score).sum
   end
 
-  def bonus_score
+  def calculate_bonus_score
     bonus = 0
     9.times do |index|
-      if @frames[index].strike?
-        bonus += if !@frames[index + 1].second_shot.exist?
-                   @frames[index + 1].first_shot.score + @frames[index + 2].first_shot.score
-                 else
-                   @frames[index + 1].first_shot.score + @frames[index + 1].second_shot.score
-                 end
-      elsif @frames[index].spare?
-        bonus += @frames[index + 1].first_shot.score
-      end
+      bonus += calculate_strike_bonus(index) if @frames[index].strike?
+      bonus += calculate_spare_bonus(index) if @frames[index].spare?
     end
     bonus
+  end
+
+  def calculate_strike_bonus(index)
+    if !@frames[index + 1].second_shot.exist?
+      [@frames[index + 1].first_shot, @frames[index + 2].first_shot].map(&:score).sum
+    else
+      [@frames[index + 1].first_shot, @frames[index + 1].second_shot].map(&:score).sum
+    end
+  end
+
+  def calculate_spare_bonus(index)
+    @frames[index + 1].first_shot.score
   end
 end
