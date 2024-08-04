@@ -14,7 +14,7 @@ class Game
 
   def score
     input_shots
-    calculate_basic_score + calculate_additional_score
+    calculate_basic_score + calculate_bonus_score
   end
 
   def parse_marks
@@ -36,5 +36,5 @@ class Game
 
   def calculate_basic_score; end
 
-  def calculate_additional_score; end
+  def calculate_bonus_score; end
 end
