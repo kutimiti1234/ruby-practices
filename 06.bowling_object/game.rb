@@ -34,7 +34,9 @@ class Game
     frames << Frame.new(*pins)
   end
 
-  def calculate_basic_score; end
+  def calculate_basic_score
+    frames.map(&:score).sum
+  end
 
   def calculate_bonus_score; end
 end
