@@ -17,7 +17,7 @@ class Game
     calculate_basic_score + calculate_additional_score
   end
 
-  def input_shots
+  def parse_marks
     marks = ARGV[0]
     pins = marks.split(',').map { |shot| Shot.new(shot) }
 
@@ -31,7 +31,7 @@ class Game
       end
     end
 
-      frames << Frame.new(*pins)
+    frames << Frame.new(*pins)
   end
 
   def calculate_basic_score; end
