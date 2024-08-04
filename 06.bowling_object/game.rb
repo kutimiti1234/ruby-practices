@@ -6,8 +6,6 @@ require_relative 'frame'
 STRIKE = 'X'
 
 class Game
-  attr_reader :frames
-
   def initialize
     @frames = []
   end
