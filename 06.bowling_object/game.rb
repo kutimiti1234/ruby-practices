@@ -6,6 +6,7 @@ require_relative 'frame'
 STRIKE = 'X'
 
 class Game
+
   def initialize
     @frames = []
   end
@@ -48,7 +49,7 @@ class Game
                    @frames[index + 1].first_shot.score + @frames[index + 1].second_shot.score
                  end
       elsif @frames[index].spare?
-        bonus += @frames[index + 1].first_shot.rcore
+        bonus += @frames[index + 1].first_shot.score
       end
     end
     bonus
