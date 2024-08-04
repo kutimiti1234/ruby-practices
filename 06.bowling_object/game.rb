@@ -3,9 +3,11 @@
 require_relative 'shot'
 require_relative 'frame'
 
-STRIKE = 10
+STRIKE = 'X'
 
 class Game
+  attr_reader :frames
+
   def initialize
     @frames = []
   end
@@ -19,11 +21,11 @@ class Game
 
   def parse_marks
     marks = ARGV[0]
-    pins = marks.split(',').map { |shot| Shot.new(shot) }
+    pins = marks.split(',')
 
     9.times do
       rolls = pins.shift(2)
-      if rolls.first.score == STRIKE
+      if rolls.first == STRIKE
         @frames << Frame.new(rolls.first)
         pins.unshift rolls.last
       else
