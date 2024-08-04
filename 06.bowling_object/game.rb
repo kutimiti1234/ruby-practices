@@ -6,16 +6,16 @@ require_relative 'frame'
 STRIKE = 10
 
 class Game
-  attr_reader :frames
-
   def initialize
     @frames = []
   end
 
   def score
-    input_shots
-    calculate_basic_score + calculate_bonus_score
+    parse_marks
+    basic_score + bonus_score
   end
+
+  private
 
   def parse_marks
     marks = ARGV[0]
@@ -24,19 +24,19 @@ class Game
     9.times do
       rolls = pins.shift(2)
       if rolls.first.score == STRIKE
-        frames << Frame.new(rolls.first)
+        @frames << Frame.new(rolls.first)
         pins.unshift rolls.last
       else
-        frames << Frame.new(*rolls)
+        @frames << Frame.new(*rolls)
       end
     end
 
-    frames << Frame.new(*pins)
+    @frames << Frame.new(*pins)
   end
 
-  def calculate_basic_score
-    frames.map(&:score).sum
+  def basic_score
+    @frames.map(&:score).sum
   end
 
-  def calculate_bonus_score; end
+  def bonus_score; end
 end
