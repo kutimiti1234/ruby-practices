@@ -40,5 +40,19 @@ class Game
     @frames.map(&:score).sum
   end
 
-  def bonus_score; end
+  def bonus_score
+    bonus = 0
+    9.times do |index|
+      if @frames[index].strike?
+        bonus += if !@frames[index + 1].second_shot.exist?
+                   @frames[index + 1].first_shot.score + @frames[index + 2].first_shot.score
+                 else
+                   @frames[index + 1].first_shot.score + @frames[index + 1].second_shot.score
+                 end
+      elsif @frames[index].spare?
+        bonus += @frames[index + 1].first_shot.rcore
+      end
+    end
+    bonus
+  end
 end
