@@ -39,10 +39,13 @@ class Frame
     index = @game.frames.find_index(self)
     return 0 if index == 9
 
-    if !@game.frames[index + 1].second_shot.exist?
-      [@game.frames[index + 1].first_shot, @game.frames[index + 2].first_shot].map(&:score).sum
+    next_frame = @game.frames[index + 1]
+    frame_after_next = @game.frames[index + 2]
+
+    if !next_frame.second_shot.exist?
+      [next_frame, frame_after_next].map(&:first_shot).map(&:score).sum
     else
-      [@game.frames[index + 1].first_shot, @game.frames[index + 1].second_shot].map(&:score).sum
+      [next_frame.first_shot, next_frame.second_shot].map(&:score).sum
     end
   end
 
