@@ -11,8 +11,8 @@ class Game
   end
 
   def score
-    @frames.map.with_index do |frame, index|
-      next_frames = frames[index + 1..].take(2)
+    @frames.map.with_index(1) do |frame, index|
+      next_frames = frames.slice(index, 2)
       frame.score(*next_frames)
     end.sum
   end
