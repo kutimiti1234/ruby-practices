@@ -5,19 +5,18 @@ require_relative 'shot'
 class Frame
   attr_reader :first_shot, :second_shot, :third_shot
 
-  def initialize(game, first_shot, second_shot = nil, third_shot = nil)
-    @game = game
+  def initialize(first_shot, second_shot = nil, third_shot = nil)
     @first_shot = first_shot
     @second_shot = second_shot.nil? ? Shot.new(nil) : second_shot
     @third_shot = third_shot.nil? ? Shot.new(nil) : third_shot
   end
 
-  def score
+  def score(next_frame = nil, frame_after_next = nil)
     basic = [@first_shot, @second_shot, @third_shot].map(&:score).sum
     if strike?
-      basic + strike_bonus
+      basic + strike_bonus(next_frame, frame_after_next)
     elsif spare?
-      basic + spare_bonus
+      basic + spare_bonus(next_frame)
     else
       basic
     end
@@ -35,12 +34,8 @@ class Frame
 
   private
 
-  def strike_bonus
-    index = @game.frames.find_index(self)
-    return 0 if index == 9
-
-    next_frame = @game.frames[index + 1]
-    frame_after_next = @game.frames[index + 2]
+  def strike_bonus(next_frame, frame_after_next)
+    return 0 if next_frame.nil?
 
     if !next_frame.second_shot.exist?
       [next_frame, frame_after_next].map(&:first_shot).map(&:score).sum
@@ -49,10 +44,9 @@ class Frame
     end
   end
 
-  def spare_bonus
-    index = @game.frames.find_index(self)
-    return 0 if index == 9
+  def spare_bonus(next_frame)
+    return 0 if next_frame.nil?
 
-    @game.frames[index + 1].first_shot.score
+    next_frame.first_shot.score
   end
 end

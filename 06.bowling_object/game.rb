@@ -11,7 +11,10 @@ class Game
   end
 
   def score
-    @frames.map(&:score).sum
+    @frames.map.with_index do |frame, index|
+      next_frames = frames[index + 1..].take(2)
+      frame.score(*next_frames)
+    end.sum
   end
 
   private
@@ -22,13 +25,13 @@ class Game
     9.times do
       rolls = pins.shift(2)
       if rolls.first.score == 10
-        frames << Frame.new(self, rolls.first)
+        frames << Frame.new(rolls.first)
         pins.unshift rolls.last
       else
-        frames << Frame.new(self, *rolls)
+        frames << Frame.new(*rolls)
       end
     end
 
-    frames << Frame.new(self, *pins)
+    frames << Frame.new(*pins)
   end
 end
