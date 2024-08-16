@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../07.ls_object/dir_entry'
-require_relative '../07.ls_object/entry'
-require_relative '../07.ls_object/ls_command.rb'
+require_relative 'dir_entry'
+require_relative 'entry'
+require_relative 'ls_command'
 
 
 class LsLong < LsCommand
