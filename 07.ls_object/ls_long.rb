@@ -2,24 +2,12 @@
 
 require_relative '../07.ls_object/dir_entry'
 require_relative '../07.ls_object/entry'
+require_relative '../07.ls_object/ls_command.rb'
 
-class LsLong
-  def initialize(paths, options)
-    @paths = paths
-    @options = options
-    @file_entries = []
-    @dir_entries = []
-  end
+
+class LsLong < LsCommand
 
   def run
-    @paths.each do |path|
-      if path.file?
-        @file_entries << FileEntry.new(path, called_from_dir: false)
-      else
-        @dir_entries << DirEntry.new(path, @options)
-      end
-    end
-
     render_files unless @file_entries.empty?
     render_directories  unless @dir_entries.empty?
   end
