@@ -9,7 +9,7 @@ class DirEntry < Entry
   def initialize(path, options)
     super(path)
     @options = options
-    @file_entries = parse_entries
+    @file_entries = collect_file_entries
   end
 
   def run_ls_long(max_sizes)
@@ -22,7 +22,7 @@ class DirEntry < Entry
 
   private
 
-  def parse_entries
+  def collect_file_entries
     pattern = @path.join('*')
     params = @options[:dot_match] ? [pattern, File::FNM_DOTMATCH] : [pattern]
     Dir.glob(*params).map { |file| FileEntry.new(file, called_from_dir: true) }
