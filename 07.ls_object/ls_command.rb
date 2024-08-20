@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'file_entries_list'
+
 class LsCommand
   def initialize(paths, options)
     @paths = paths

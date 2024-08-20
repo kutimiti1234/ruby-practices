@@ -7,6 +7,7 @@ require_relative '../07.ls_object/dir_entry'
 class DirEntryTest < Minitest::Test
   def test_ls_long_if_target_is_file
     expected_stats = <<~TEXT.chomp
+      合計 106680
       -rw-r--r--  1 kutimiti kutimiti      2698  7月 27 21:36 Gemfile
       -rw-r--r--  1 kutimiti kutimiti      8287  7月 27 21:36 Gemfile.lock
       -rw-r--r--  1 kutimiti kutimiti      4014  7月 27 21:28 README.md
@@ -31,7 +32,7 @@ class DirEntryTest < Minitest::Test
     max_sizes = %i[nlink user group size].map do |key|
       entries.map(&:stats).map { |data| data[key].size }.max
     end
-    assert_equal expected_stats, directory.run_ls_long(max_sizes)
+    assert_equal expected_stats, directory.run_ls_long
   end
 
   def test_dir_total
