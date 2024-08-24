@@ -20,7 +20,7 @@ class LsShort < LsCommand
 
   def render_files
     file_list = FileEntriesList.new(@file_entries, @options)
-    puts file_list.run_ls_short
+    puts file_list.run_ls_short(@width)
   end
 
   def render_directories

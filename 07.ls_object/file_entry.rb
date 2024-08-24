@@ -37,7 +37,7 @@ class FileEntry < Entry
     group = Etc.getgrgid(stats.gid).name
     size = stats.size.to_s
     mtime = stats.mtime.strftime('%-m月 %e %H:%M')
-    name = @called_from_dir ? File.basename(@path) : @path
+    name = @called_from_dir ? File.basename(@path) : @path.to_s
 
     # File::statのブロックサイズの単位は512bytesであるから変換する
     block_size = stats.blocks * (512 / BLOCK_SIZE.to_f)
