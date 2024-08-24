@@ -8,7 +8,7 @@ class FileEntriesList
 
   def initialize(entries, options)
     @options = options
-    @entries = entries.sort_by {|entry| entry.stats[:name]}
+    @entries = entries.sort_by { |entry| entry.stats[:name] }
   end
 
   def run_ls_short(width)

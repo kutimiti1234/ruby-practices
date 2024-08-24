@@ -27,7 +27,7 @@ class LsShort < LsCommand
     @dir_entries.each do |dir_entry|
       puts "#{dir_entry.path}:" if dir_entry.path.directory? && (@dir_entries.size >= 2 || !@file_entries.empty?)
       puts dir_entry.run_ls_short(@width)
+      puts if @dir_entries.size > 1
     end
   end
-
 end
