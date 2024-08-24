@@ -7,8 +7,8 @@ require_relative '../07.ls_object/ls_short'
 class LsShortTest < Minitest::Test
   def test_run_files
     expected = <<~TEXT
-      01.fizzbuzz/fizzbuzz.rb   03.bowling/bowling.rb     07.ls_object/dir_entry.rb 07.ls_object/ls_long.rb   07.ls_object/ls_long.rb   07.ls_object/main.rb
-      02.calendar/calendar.rb   04.ls/ls_command.rb       07.ls_object/entry.rb     07.ls_object/ls_long.rb   07.ls_object/main.rb
+      01.fizzbuzz/fizzbuzz.rb      03.bowling/bowling.rb        07.ls_object/dir_entry.rb    07.ls_object/ls_long.rb      07.ls_object/ls_long.rb      07.ls_object/main.rb
+      02.calendar/calendar.rb      04.ls/ls_command.rb          07.ls_object/entries_list.rb 07.ls_object/ls_long.rb      07.ls_object/main.rb
     TEXT
     options = { dot_match: false }
 
@@ -21,7 +21,7 @@ class LsShortTest < Minitest::Test
     path7 = Pathname('07.ls_object/ls_long.rb')
     path8 = Pathname('07.ls_object/ls_long.rb')
     path9 = Pathname('07.ls_object/main.rb')
-    path10 = Pathname('07.ls_object/entry.rb')
+    path10 = Pathname('07.ls_object/entries_list.rb')
     path11 = Pathname('07.ls_object/main.rb')
     paths = [path1, path2, path3, path4, path5, path6, path7, path8, path9, path10, path11]
     width = 236

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'dir_entry'
-require_relative 'entry'
 require_relative 'ls_command'
 
 class LsLong < LsCommand

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'etc'
-require_relative 'entry'
 
 BLOCK_SIZE = 1024
 FILE_TYPE_LOOKUP = {
@@ -10,11 +9,11 @@ FILE_TYPE_LOOKUP = {
   'link' => 'l'
 }.tap { |h| h.default = '-' }.freeze
 
-class FileEntry < Entry
-  attr_reader :stats
+class FileEntry
+  attr_reader :path, :stats
 
   def initialize(path, called_from_dir: false)
-    super(path)
+    @path = path
     @called_from_dir = called_from_dir
     @stats = parse_stats
   end
