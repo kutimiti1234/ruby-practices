@@ -19,8 +19,12 @@ class FileEntry < Entry
     @stats = parse_stats
   end
 
+  def run_ls_short(max_sizes)
+    short_format_row(max_sizes)
+  end
+
   def run_ls_long(max_sizes)
-    format_row(@stats, *max_sizes)
+    long_format_row(@stats, *max_sizes)
   end
 
   private
@@ -52,7 +56,11 @@ class FileEntry < Entry
     file_type + file_permissions
   end
 
-  def format_row(data, max_nlink, max_user, max_group, max_size)
+  def short_format_row(max_file_path_count)
+    @stats[:name].ljust(max_file_path_count + 1)
+  end
+
+  def long_format_row(data, max_nlink, max_user, max_group, max_size)
     [
       data[:type_and_mode],
       " #{data[:nlink].rjust(max_nlink)}",
