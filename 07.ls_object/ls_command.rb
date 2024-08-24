@@ -21,7 +21,7 @@ class LsCommand
     paths.each do |path|
       if path.file?
         files << FileEntry.new(path, called_from_dir: false)
-      else
+      elsif path.directory?
         dirs << DirEntry.new(path, @options)
       end
     end
