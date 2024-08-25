@@ -18,8 +18,8 @@ class FileEntry
     @stats = parse_stats
   end
 
-  def run_ls_short(max_sizes)
-    short_format_row(max_sizes)
+  def run_ls_short(max_file_name_size)
+    short_format_row(max_file_name_size)
   end
 
   def run_ls_long(max_sizes)
