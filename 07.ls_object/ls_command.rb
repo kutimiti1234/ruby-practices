@@ -25,6 +25,8 @@ class LsCommand
         dirs << DirEntry.new(path, @options)
       end
     end
+    dirs = dirs.sort_by(&:path)
+    dirs = dirs.reverse if @options[:reverse]
     [files, dirs]
   end
 

@@ -23,9 +23,10 @@ class DirEntry
   end
 
   def run_ls_long
-    body = ["合計 #{total}"]
+    header = ["合計 #{total}"]
     max_sizes = find_max_sizes
-    [body, @file_entries.map { |entry| entry.run_ls_long(max_sizes) }.join("\n")].join("\n")
+    body = @file_entries.map { |entry| entry.run_ls_long(max_sizes) }.join("\n")
+    [header, body].join("\n")
   end
 
   def total
@@ -37,6 +38,7 @@ class DirEntry
   def collect_file_entries
     pattern = @path.join('*')
     params = @options[:dot_match] ? [pattern, File::FNM_DOTMATCH] : [pattern]
-    Dir.glob(*params).map { |file| FileEntry.new(file, called_from_dir: true) }
+    file_entries = Dir.glob(*params).map { |file| FileEntry.new(file, called_from_dir: true) }.sort_by { |file| file.stats[:name] }
+    @options[:reverse] ? file_entries.reverse : file_entries
   end
 end
