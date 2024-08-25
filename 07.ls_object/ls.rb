@@ -7,12 +7,12 @@ require_relative 'ls_short'
 
 class Ls
   def initialize(width)
-    @paths, @options = parse_paths_and_options
+    paths, options = parse_paths_and_options
 
-    @command = if @options[:long_format]
-                 LsLong.new(@paths, @options)
+    @command = if options[:long_format]
+                 LsLong.new(paths, options)
                else
-                 LsShort.new(@paths, @options, width)
+                 LsShort.new(paths, options, width)
                end
   end
 
