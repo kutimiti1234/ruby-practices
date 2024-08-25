@@ -10,8 +10,7 @@ class FileEntriesList
 
   def initialize(entries, options)
     @options = options
-    @file_entries = entries.sort_by { |entry| entry.stats[:name] }
-    @file_entries = @file_entries.reverse if @options[:reverse]
+    @file_entries = @options[:reverse] ? entries.sort_by { |entry| entry.stats[:name] }.reverse : entries.sort_by { |entry| entry.stats[:name] }
   end
 
   def run_ls_short(width)
