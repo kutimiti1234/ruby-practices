@@ -30,7 +30,7 @@ class Ls
     opt.on('-a') { |v| options[:dot_match] = v }
     opt.parse!(ARGV)
 
-    paths = ARGV.map { |path| Pathname(path) } || [Pathname('.')]
+    paths = ARGV.empty? ? [Pathname('.')] : ARGV.map { |path| Pathname(path) }
 
     [paths, options]
   end
