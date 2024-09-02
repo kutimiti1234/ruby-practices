@@ -7,7 +7,8 @@ require_relative 'ls_short'
 
 class Ls
   def initialize(width)
-    paths, options = parse_paths_and_options
+    paths = parse_paths
+    options = parse_options
 
     @command = if options[:long_format]
                  LsLong.new(paths, options)
@@ -22,7 +23,7 @@ class Ls
 
   private
 
-  def parse_paths_and_options
+  def parse_options
     opt = OptionParser.new
     options = { long_format: false, reverse: false, dot_match: false }
     opt.on('-l') { |v| options[:long_format] = v }
@@ -30,8 +31,10 @@ class Ls
     opt.on('-a') { |v| options[:dot_match] = v }
     opt.parse!(ARGV)
 
-    paths = ARGV.empty? ? [Pathname('.')] : ARGV.map { |path| Pathname(path) }
+    options
+  end
 
-    [paths, options]
+  def parse_paths
+    ARGV.empty? ? [Pathname('.')] : ARGV.map { |path| Pathname(path) }
   end
 end
