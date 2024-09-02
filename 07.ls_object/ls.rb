@@ -2,21 +2,14 @@
 
 require 'pathname'
 require 'optparse'
-require_relative 'ls_long'
-require_relative 'ls_short'
+require_relative 'ls_command'
 
 class Ls
-  def initialize(width)
-    paths = parse_paths
   def initialize
     options = parse_options
     paths = parse_paths
 
-    @command = if options[:long_format]
-                 LsLong.new(paths, options)
-               else
-                 LsShort.new(paths, options, width)
-               end
+    @command = LsCommand.new(paths, options)
   end
 
   def run
