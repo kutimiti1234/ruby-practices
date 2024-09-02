@@ -8,7 +8,9 @@ require_relative 'ls_short'
 class Ls
   def initialize(width)
     paths = parse_paths
+  def initialize
     options = parse_options
+    paths = parse_paths
 
     @command = if options[:long_format]
                  LsLong.new(paths, options)
