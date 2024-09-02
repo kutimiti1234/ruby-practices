@@ -6,8 +6,6 @@ require_relative 'entries_list'
 class FileEntriesList
   include EntriesList
 
-  attr_accessor :entries
-
   def initialize(entries, options)
     @options = options
     @file_entries = @options[:reverse] ? entries.sort_by { |entry| entry.stats[:name] }.reverse : entries.sort_by { |entry| entry.stats[:name] }
