@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module EntriesList
+module Entries
   private
 
   def find_max_sizes

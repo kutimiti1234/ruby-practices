@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require_relative 'file_entry'
-require_relative 'entries_list'
+require_relative 'entries'
 
 class FileEntriesList
-  include EntriesList
+  include Entries
 
   def initialize(entries, options)
     @options = options
