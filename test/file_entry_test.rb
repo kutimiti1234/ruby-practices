@@ -5,20 +5,75 @@ require 'pathname'
 require_relative '../07.ls_object/file_entry'
 
 class FileEntryTest < Minitest::Test
-  def test_ls_long
-    expected_stats = <<~TEXT.chomp
-      -rw-r--r-- 1 kutimiti kutimiti 2698  7月 27 21:36 ../fjord-books_app-2023/Gemfile
+  def test_monde_file
+    expected_mode = <<~TEXT.chomp
+    -rw-r--r--
     TEXT
-    expected_stats2 = <<~TEXT.chomp
-      -rw-r--r-- 1 kutimiti kutimiti  258  7月 27 21:28 ../fjord-books_app-2023/Rakefile
-    TEXT
-    file = FileEntry.new(Pathname('../fjord-books_app-2023/Gemfile'), called_from_dir: false)
-    file2 = FileEntry.new(Pathname('../fjord-books_app-2023/Rakefile'), called_from_dir: false)
-    entries = [file, file2]
-    max_sizes = %i[nlink user group size].map do |key|
-      entries.map(&:stats).map { |data| data[key].size }.max
-    end
-    assert_equal expected_stats, file.run_ls_long(max_sizes)
-    assert_equal expected_stats2, file2.run_ls_long(max_sizes)
+    file = FileEntry.new(Pathname('./test/files/test.txt'), called_from_dir: false)
+  assert_equal expected_mode, file.mode?
   end
+
+  def test_monde_directory
+    expected_mode = <<~TEXT.chomp
+      drwxr-xr-x
+    TEXT
+    file = FileEntry.new(Pathname('./test/files'), called_from_dir: false)
+  assert_equal expected_mode, file.mode?
+  end
+
+  def test_monde_link
+    expected_mode = <<~TEXT.chomp
+      lrwxrwxrwx
+    TEXT
+    file = FileEntry.new(Pathname('./test/files/text_link'), called_from_dir: false)
+  assert_equal expected_mode, file.mode?
+  end
+
+  def test_nlink
+    expected_mode = <<~TEXT.chomp
+      1
+    TEXT
+    file = FileEntry.new(Pathname('./test/files/test.txt'), called_from_dir: true)
+    assert_equal expected_mode, file.nlink?
+  end
+
+  def test_user
+    expected_mode = <<~TEXT.chomp
+    migi
+    TEXT
+    file = FileEntry.new(Pathname('./test/files/test.txt'), called_from_dir: true)
+    assert_equal expected_mode, file.user?
+  end
+  def test_group
+    expected_mode = <<~TEXT.chomp
+    migi
+    TEXT
+    file = FileEntry.new(Pathname('./test/files/test.txt'), called_from_dir: true)
+    assert_equal expected_mode, file.group?
+  end
+
+  def test_size
+    expected_mode = <<~TEXT.chomp
+      5
+    TEXT
+    file = FileEntry.new(Pathname('./test/files/test.txt'), called_from_dir: true)
+    assert_equal expected_mode, file.size?
+  end
+
+  def test_time
+    expected_mode = <<~TEXT.chomp
+      9月 11 00:11
+    TEXT
+    file = FileEntry.new(Pathname('./test/files/test.txt'), called_from_dir: true)
+    assert_equal expected_mode, file.time?
+  end
+
+  def test_mode
+    expected_mode = <<~TEXT.chomp
+    test.txt
+    TEXT
+    file = FileEntry.new(Pathname('./test/files/test.txt'), called_from_dir: true)
+    assert_equal expected_mode, file.name?
+  end
+
 end
