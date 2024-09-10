@@ -7,7 +7,7 @@ FILE_TYPE_LOOKUP = {
   'directory' => 'd',
   'file' => '-',
   'link' => 'l'
-}.tap { |h| h.default = '-' }.freeze
+}.freeze
 
 class FileEntry
   attr_reader :path, :stats
