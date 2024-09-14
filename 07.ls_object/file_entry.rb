@@ -50,5 +50,4 @@ class FileEntry
   def name?
     @called_from_dir ? File.basename(@path) : @path.to_s
   end
-
 end
