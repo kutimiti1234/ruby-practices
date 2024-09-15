@@ -2,6 +2,7 @@
 
 require 'io/console'
 require_relative 'dir_entry'
+require_relative 'ls_short'
 require_relative 'ls_long'
 
 SHORT_FORMAT_WHOLE_WIDTH = IO.console.winsize[1]
@@ -10,7 +11,7 @@ class LsCommand
   def initialize(paths, options)
     @paths = paths
     @options = options
-    @format = LsLong.new
+    @format = @options[:long_format] ? LsLong.new : LsShort.new
     @directories = @paths.map { |path| DirEntry.new(path, @options) }
                          .sort_by(&:path)
                          .tap { |directories| @options[:reverse] ? directories.reverse : directories }
@@ -27,20 +28,20 @@ class LsCommand
   private
 
   def run_ls_short
-    render_directories_short unless @directories.empty?
-  end
+    return if @directories.empty?
 
-  def run_ls_long
     @directories.each do |dir_entry|
       puts @format.run(dir_entry)
-      puts if @directories.size > 1
+      puts
     end
   end
 
-  def render_directories_short
+  def run_ls_long
+    return if @directories.empty?
+
     @directories.each do |dir_entry|
-      puts dir_entry.run_ls_short(SHORT_FORMAT_WHOLE_WIDTH)
-      puts if @directories.size > 1
+      puts @format.run(dir_entry)
+      puts
     end
   end
 end
