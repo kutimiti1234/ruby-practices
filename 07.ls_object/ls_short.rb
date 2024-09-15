@@ -23,6 +23,7 @@ class LsShort
   def render_short_format_row(row_file_entries, max_file_name_size)
     row_file_entries.map do |file_entry|
       file_entry&.name&.ljust(max_file_name_size)
+      file_entry&.name&.ljust(max_file_name_size + 1)
     end.join.rstrip
   end
 end
