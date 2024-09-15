@@ -6,7 +6,7 @@ require_relative 'ls_command'
 
 class Ls
   def initialize
-    #parse_optionsを先に実行せずにparse_pathsを実行すると不具合が発生する。
+    # parse_optionsを先に実行せずにparse_pathsを実行すると不具合が発生する。
     options = parse_options
     paths = parse_paths
 
