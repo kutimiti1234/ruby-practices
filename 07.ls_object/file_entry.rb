@@ -48,7 +48,7 @@ class FileEntry
   end
 
   def name
-    @path.to_s
+    File.basename(@path)
   end
 
   def blocks
