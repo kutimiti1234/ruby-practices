@@ -15,7 +15,7 @@ class DirEntryTest < Minitest::Test
     TEXT
     options = { dot_match: false }
     directory = DirEntry.new(Pathname('./test/files'), options)
-    command = LsLong.new(directory)
-    assert_equal expected_stats, command.run
+    command = LsLong.new
+    assert_equal expected_stats, command.run(directory)
   end
 end
