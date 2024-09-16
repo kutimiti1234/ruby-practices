@@ -12,14 +12,16 @@ class LsCommand
     @format = @options[:long_format] ? LsLong.new : LsShort.new
     @directories = @paths.map { |path| DirectoryEntry.new(path, @options) }
                          .sort_by(&:path)
-                         .tap { |directories| @options[:reverse] ? directories.reverse : directories }
+                         .yield_self { |directories| @options[:reverse] ? directories.reverse : directories }
   end
 
   def run
-    @directories.each do |dir_entry|
-      puts "#{dir_entry.path}:" if @directories.count > 1
-      puts @format.run(dir_entry)
-      puts if @directories.count > 1
-    end
+    output = @directories.map do |dir_entry|
+      header = "#{dir_entry.path}:" if @directories.count > 1
+      body = "#{@format.run(dir_entry)}"
+    [header,body].compact.join("\n")
+    end.join("\n\n").rstrip
+
+    puts output
   end
 end
