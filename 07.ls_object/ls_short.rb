@@ -13,7 +13,7 @@ class LsShort
   end
 
   def safe_transpose(nested_file_entries)
-    nested_file_entries[0].zip(*nested_file_entries[1..])
+    nested_file_entries[0].zip(*nested_file_entries[1..]).map(&:compact)
   end
 
   def format_table(file_entries, max_file_name_size)
@@ -24,8 +24,7 @@ class LsShort
 
   def render_short_format_row(row_file_entries, max_file_name_size)
     row_file_entries.map do |file_entry|
-      file_entry&.name&.ljust(max_file_name_size)
-      file_entry&.name&.ljust(max_file_name_size + 1)
+      file_entry.name.ljust(max_file_name_size + 1)
     end.join.rstrip
   end
 end
