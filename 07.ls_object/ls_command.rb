@@ -18,8 +18,8 @@ class LsCommand
   def run
     output = @directories.map do |dir_entry|
       header = "#{dir_entry.path}:" if @directories.count > 1
-      body = "#{@format.run(dir_entry)}"
-    [header,body].compact.join("\n")
+      body = @format.run(dir_entry).to_s
+      [header, body].compact.join("\n")
     end.join("\n\n").rstrip
 
     puts output
