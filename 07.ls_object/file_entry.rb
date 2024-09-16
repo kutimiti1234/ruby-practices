@@ -3,10 +3,14 @@
 require 'etc'
 
 FILE_TYPE_LOOKUP = {
-  'directory' => 'd',
   'file' => '-',
-  'link' => 'l'
-}.tap { |h| h.default = '-' }.freeze
+  'directory' => 'd',
+  'characterSpecial' => 'c',
+  'blockSpecial' => 'b',
+  'link' => 'l',
+  'socket' => 's',
+  'fifo' => 'p'
+}.freeze
 BLOCK_SIZE = 1024
 
 class FileEntry
