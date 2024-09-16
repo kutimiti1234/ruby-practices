@@ -10,7 +10,7 @@ class LsLong
       "#{file.user.ljust(max_sizes[:user])} " \
       "#{file.group.ljust(max_sizes[:group])} " \
       "#{file.size.rjust(max_sizes[:size])}  " \
-      "#{file.time} " \
+      "#{file.time.rjust(max_sizes[:time])} " \
       "#{file.name}" \
     end.join("\n")
     [header, body].join("\n")

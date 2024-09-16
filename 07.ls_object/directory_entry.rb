@@ -12,7 +12,7 @@ class DirectoryEntry
   end
 
   def find_max_sizes
-    %i[nlink user group size].to_h do |key|
+    %i[nlink user group size time].to_h do |key|
       [key, @file_entries.map { |entry| entry.send(key).size }.max]
     end
   end
