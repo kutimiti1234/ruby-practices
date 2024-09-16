@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-MAX_DISPLAY_SIZE = 234
 class LsShort
+  MAX_DISPLAY_WIDTH = IO.console.winsize[1]
+
   def run(entries)
     max_file_name_count = entries.file_entries.map { |f| f.name.size }.max
-    col_count = MAX_DISPLAY_SIZE / (max_file_name_count + 1)
+    col_count = MAX_DISPLAY_WIDTH / (max_file_name_count + 1)
     row_count = col_count.zero? ? entries.count : (entries.file_entries.count.to_f / col_count).ceil
     transposed_file_entries = safe_transpose(entries.file_entries.each_slice(row_count).to_a)
     format_table(transposed_file_entries, max_file_name_count)
