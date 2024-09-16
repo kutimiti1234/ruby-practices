@@ -18,25 +18,6 @@ class LsCommand
   end
 
   def run
-    if @options[:long_format]
-      run_ls_long
-    else
-      run_ls_short
-    end
-  end
-
-  private
-
-  def run_ls_short
-    return if @directories.empty?
-
-    @directories.each do |dir_entry|
-      puts @format.run(dir_entry)
-      puts
-    end
-  end
-
-  def run_ls_long
     return if @directories.empty?
 
     @directories.each do |dir_entry|
