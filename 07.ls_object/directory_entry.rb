@@ -26,7 +26,9 @@ class DirectoryEntry
   def collect_file_entries
     pattern = @path.join('*')
     params = @options[:dot_match] ? [pattern, File::FNM_DOTMATCH] : [pattern]
-    file_entries = Dir.glob(*params).map { |file| FileEntry.new(file) }.sort_by(&:name)
-    @options[:reverse] ? file_entries.reverse : file_entries
+    Dir.glob(*params)
+       .map { |file| FileEntry.new(file) }
+       .sort_by(&:name)
+       .then { |file_entries| @options[:reverse] ? file_entries.reverse : file_entries }
   end
 end
