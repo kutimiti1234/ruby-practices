@@ -5,8 +5,6 @@ require_relative 'dir_entry'
 require_relative 'ls_short'
 require_relative 'ls_long'
 
-SHORT_FORMAT_WHOLE_WIDTH = IO.console.winsize[1]
-
 class LsCommand
   def initialize(paths, options)
     @paths = paths
