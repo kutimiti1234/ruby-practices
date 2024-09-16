@@ -5,6 +5,9 @@ require 'pathname'
 require_relative '../07.ls_object/ls_command'
 
 class LsCommandTest < Minitest::Test
+  def setup
+    @format = LsShort.new(50)
+  end
   def test_run_with_multiple_directories
     expected = <<~TEXT
       ./test/ls_short_test_files/:
@@ -24,7 +27,7 @@ class LsCommandTest < Minitest::Test
     paths = [path1, path2]
     options = { long_format: false, dot_match: false }
     command = LsCommand.new(paths, options)
-    LsShort.const_set(:MAX_DISPLAY_WIDTH, 50)
+    command.instance_variable_set(:@format,LsShort.new(50))
     assert_output(expected) { command.run }
   end
 
