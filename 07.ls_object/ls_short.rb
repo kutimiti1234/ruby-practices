@@ -5,6 +5,8 @@ class LsShort
   MAX_DISPLAY_WIDTH = IO.console.winsize[1]
 
   def run(entries)
+    return if entries.file_entries.count.zero?
+
     max_file_name_count = entries.file_entries.map { |f| f.name.size }.max
     col_count = MAX_DISPLAY_WIDTH / (max_file_name_count + 1)
     row_count = col_count.zero? ? entries.count : (entries.file_entries.count.to_f / col_count).ceil
