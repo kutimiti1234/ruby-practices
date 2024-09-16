@@ -26,12 +26,6 @@ class LsCommandTest < Minitest::Test
     command = LsCommand.new(paths, options)
     LsShort.const_set(:MAX_DISPLAY_WIDTH, 50)
     assert_output(expected) { command.run }
-    Pathname('./test/ls_short_test_files/')
-    paths = [path]
-    options = { long_format: false, dot_match: false }
-    command = LsCommand.new(paths, options)
-    LsShort.const_set(:MAX_DISPLAY_WIDTH, 50)
-    assert_output(expected) { command.run }
   end
 
   def test_run_long
