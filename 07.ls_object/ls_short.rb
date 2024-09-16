@@ -14,6 +14,8 @@ class LsShort
     format_table(transposed_file_entries, max_file_name_count)
   end
 
+  private
+
   def safe_transpose(nested_file_entries)
     nested_file_entries[0].zip(*nested_file_entries[1..]).map(&:compact)
   end
