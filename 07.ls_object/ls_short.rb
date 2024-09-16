@@ -2,15 +2,15 @@
 
 require 'io/console'
 class LsShort
-  def initialize(display_width = IO.console.winsize[1])
-    @display_width = display_width
+  def initialize(window_width = IO.console.winsize[1])
+    @window_width = window_width
   end
 
   def run(entries)
     return if entries.file_entries.count.zero?
 
     max_file_name_count = entries.file_entries.map { |f| f.name.size }.max
-    col_count = @display_width / (max_file_name_count + 1)
+    col_count = @window_width / (max_file_name_count + 1)
     row_count = col_count.zero? ? entries.count : (entries.file_entries.count.to_f / col_count).ceil
     transposed_file_entries = safe_transpose(entries.file_entries.each_slice(row_count).to_a)
     format_table(transposed_file_entries, max_file_name_count)
