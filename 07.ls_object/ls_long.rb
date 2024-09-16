@@ -4,7 +4,7 @@ class LsLong
   def run(entries)
     header = ["合計 #{entries.total.to_i}"]
     max_sizes = entries.find_max_sizes
-    body = entries.file_entries.map do |file| \
+    body = entries.file_entries.map do |file|
       "#{file.mode} "\
       "#{file.nlink.rjust(max_sizes[:nlink])} " \
       "#{file.user.ljust(max_sizes[:user])} " \
