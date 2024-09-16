@@ -8,6 +8,7 @@ class LsCommandTest < Minitest::Test
   def setup
     @format = LsShort.new(50)
   end
+
   def test_run_with_multiple_directories
     expected = <<~TEXT
       ./test/ls_short_test_files/:
@@ -27,7 +28,7 @@ class LsCommandTest < Minitest::Test
     paths = [path1, path2]
     options = { long_format: false, dot_match: false }
     command = LsCommand.new(paths, options)
-    command.instance_variable_set(:@format,LsShort.new(50))
+    command.instance_variable_set(:@format, LsShort.new(50))
     assert_output(expected) { command.run }
   end
 
