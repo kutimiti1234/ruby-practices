@@ -2,7 +2,7 @@
 
 require_relative 'file_entry'
 
-class DirEntry
+class DirectoryEntry
   attr_accessor :path, :file_entries
 
   def initialize(path, options)

@@ -4,7 +4,7 @@ require 'minitest/autorun'
 require 'pathname'
 require 'io/console'
 require_relative '../07.ls_object/ls_long'
-require_relative '../07.ls_object/dir_entry'
+require_relative '../07.ls_object/directory_entry'
 
 class DirEntryTest < Minitest::Test
   def test_ls_long_if_target_is_file
@@ -14,7 +14,7 @@ class DirEntryTest < Minitest::Test
       lrwxrwxrwx 1 migi migi 8  9月 11 00:21 text_link
     TEXT
     options = { dot_match: false }
-    directory = DirEntry.new(Pathname('./test/files'), options)
+    directory = DirectoryEntry.new(Pathname('./test/files'), options)
     command = LsLong.new
     assert_equal expected_stats, command.run(directory)
   end

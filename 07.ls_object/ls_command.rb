@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'io/console'
-require_relative 'dir_entry'
+require_relative 'directory_entry'
 require_relative 'ls_short'
 require_relative 'ls_long'
 
@@ -10,7 +10,7 @@ class LsCommand
     @paths = paths
     @options = options
     @format = @options[:long_format] ? LsLong.new : LsShort.new
-    @directories = @paths.map { |path| DirEntry.new(path, @options) }
+    @directories = @paths.map { |path| DirectoryEntry.new(path, @options) }
                          .sort_by(&:path)
                          .tap { |directories| @options[:reverse] ? directories.reverse : directories }
   end

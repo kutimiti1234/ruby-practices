@@ -3,7 +3,7 @@
 require 'minitest/autorun'
 require 'pathname'
 require 'io/console'
-require_relative '../07.ls_object/dir_entry'
+require_relative '../07.ls_object/directory_entry'
 require_relative '../07.ls_object/ls_short'
 
 class DirEntryTest < Minitest::Test
@@ -15,7 +15,7 @@ class DirEntryTest < Minitest::Test
       abc        qwertfdsdf zzzz
     TEXT
     options = { dot_match: false }
-    directory = DirEntry.new(Pathname('./test/ls_short_test_files'), options)
+    directory = DirectoryEntry.new(Pathname('./test/ls_short_test_files'), options)
     command = LsShort.new
     LsShort.const_set(:MAX_DISPLAY_WIDTH, 50)
     assert_equal expected, command.run(directory)
@@ -29,7 +29,7 @@ class DirEntryTest < Minitest::Test
       9999       ls.rb      zzz
     TEXT
     options = { dot_match: true, long_format: false }
-    directory = DirEntry.new(Pathname('./test/ls_short_test_files'), options)
+    directory = DirectoryEntry.new(Pathname('./test/ls_short_test_files'), options)
     command = LsShort.new
     LsShort.const_set(:MAX_DISPLAY_WIDTH, 50)
     assert_equal expected, command.run(directory)
@@ -43,7 +43,7 @@ class DirEntryTest < Minitest::Test
       zzz        ls.rb      9999
     TEXT
     options = { dot_match: false, reverse: true }
-    directory = DirEntry.new(Pathname('./test/ls_short_test_files'), options)
+    directory = DirectoryEntry.new(Pathname('./test/ls_short_test_files'), options)
     command = LsShort.new
     LsShort.const_set(:MAX_DISPLAY_WIDTH, 50)
     assert_equal expected, command.run(directory)
