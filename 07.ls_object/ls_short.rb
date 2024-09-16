@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "io/console"
 class LsShort
   MAX_DISPLAY_WIDTH = IO.console.winsize[1]
 
