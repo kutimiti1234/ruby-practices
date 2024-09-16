@@ -12,7 +12,7 @@ class LsCommand
     @format = @options[:long_format] ? LsLong.new : LsShort.new
     @directories = @paths.map { |path| DirectoryEntry.new(path, @options) }
                          .sort_by(&:path)
-                         .yield_self { |directories| @options[:reverse] ? directories.reverse : directories }
+                         .then { |directories| @options[:reverse] ? directories.reverse : directories }
   end
 
   def run
