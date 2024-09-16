@@ -16,8 +16,6 @@ class LsCommand
   end
 
   def run
-    return if @directories.empty?
-
     @directories.each do |dir_entry|
       puts "#{dir_entry.path}:" if @directories.count > 1
       puts @format.run(dir_entry)
