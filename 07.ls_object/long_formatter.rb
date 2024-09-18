@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class LsLong
+class LongFormatter
   def run(entries)
     header = ["合計 #{entries.total.to_i}"]
     max_sizes = entries.find_max_sizes

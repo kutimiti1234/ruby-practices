@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'io/console'
-class LsShort
+class ShortFormatter
   def initialize
     @window_width = IO.console.winsize[1]
   end
