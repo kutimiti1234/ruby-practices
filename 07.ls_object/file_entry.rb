@@ -2,7 +2,7 @@
 
 require 'etc'
 
-FILE_TYPE_LOOKUP = {
+FILE_TYPES = {
   'file' => '-',
   'directory' => 'd',
   'characterSpecial' => 'c',
@@ -22,8 +22,8 @@ class FileEntry
   end
 
   def mode
-    file_type = FILE_TYPE_LOOKUP[@stats.ftype]
     file_permissions = @stats.mode.to_s(8).rjust(6, '0')[3..5].chars.map do |c|
+    file_type = FILE_TYPES[@stat.ftype]
       rwx = %w[- x w . r]
       rwx[c.to_i & 0b100] + rwx[c.to_i & 0b010] + rwx[c.to_i & 0b001]
     end.join
