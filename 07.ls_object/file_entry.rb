@@ -18,12 +18,12 @@ class FileEntry
 
   def initialize(path)
     @path = path
-    @stats = File.lstat(@path)
+    @stat = File.lstat(@path)
   end
 
   def mode
-    file_permissions = @stats.mode.to_s(8).rjust(6, '0')[3..5].chars.map do |c|
     file_type = FILE_TYPES[@stat.ftype]
+    file_permissions = @stat.mode.to_s(8).rjust(6, '0')[3..5].chars.map do |c|
       rwx = %w[- x w . r]
       rwx[c.to_i & 0b100] + rwx[c.to_i & 0b010] + rwx[c.to_i & 0b001]
     end.join
@@ -32,23 +32,23 @@ class FileEntry
   end
 
   def nlink
-    @stats.nlink.to_s
+    @stat.nlink.to_s
   end
 
   def user
-    Etc.getpwuid(@stats.uid).name
+    Etc.getpwuid(@stat.uid).name
   end
 
   def group
-    Etc.getgrgid(@stats.gid).name
+    Etc.getgrgid(@stat.gid).name
   end
 
   def size
-    @stats.size.to_s
+    @stat.size.to_s
   end
 
   def time
-    @stats.mtime.strftime('%-m月 %e %H:%M')
+    @stat.mtime.strftime('%-m月 %e %H:%M')
   end
 
   def name
@@ -57,6 +57,6 @@ class FileEntry
 
   def blocks
     # File::statのブロックサイズの単位は512bytesであるから変換する
-    @stats.blocks * (512 / BLOCK_SIZE.to_f)
+    @stat.blocks * (512 / BLOCK_SIZE.to_f)
   end
 end
