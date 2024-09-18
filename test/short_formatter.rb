@@ -4,9 +4,12 @@ require 'minitest/autorun'
 require 'pathname'
 require 'io/console'
 require_relative '../07.ls_object/directory_entry'
-require_relative '../07.ls_object/ls_short'
+require_relative '../07.ls_object/short_formatter'
 
 class DirEntryTest < Minitest::Test
+  ShortFormatter.class_eval do
+    attr_accessor :window_width
+  end
   def test_ls_short
     expected = <<~TEXT.chomp
       123456789  defghijk   z          zzzzz
@@ -16,8 +19,9 @@ class DirEntryTest < Minitest::Test
     TEXT
     options = { dot_match: false }
     directory = DirectoryEntry.new(Pathname('./test/ls_short_test_files'), options)
-    command = LsShort.new(50)
-    assert_equal expected, command.run(directory)
+    formatter = ShortFormatter.new
+    formatter.window_width = 50
+    assert_equal expected, formatter.run(directory)
   end
 
   def test_ls_short_all
@@ -29,8 +33,9 @@ class DirEntryTest < Minitest::Test
     TEXT
     options = { dot_match: true, long_format: false }
     directory = DirectoryEntry.new(Pathname('./test/ls_short_test_files'), options)
-    command = LsShort.new(50)
-    assert_equal expected, command.run(directory)
+    formatter = ShortFormatter.new
+    formatter.window_width = 50
+    assert_equal expected, formatter.run(directory)
   end
 
   def test_ls_short_reverse
@@ -42,7 +47,8 @@ class DirEntryTest < Minitest::Test
     TEXT
     options = { dot_match: false, reverse: true }
     directory = DirectoryEntry.new(Pathname('./test/ls_short_test_files'), options)
-    command = LsShort.new(50)
-    assert_equal expected, command.run(directory)
+    formatter = ShortFormatter.new
+    formatter.window_width = 50
+    assert_equal expected, formatter.run(directory)
   end
 end
