@@ -2,8 +2,8 @@
 
 require 'io/console'
 class LsShort
-  def initialize(window_width = IO.console.winsize[1])
-    @window_width = window_width
+  def initialize
+    @window_width = IO.console.winsize[1]
   end
 
   def run(entries)
